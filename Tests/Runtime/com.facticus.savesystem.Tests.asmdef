@@ -1,0 +1,11 @@
+{
+  "name": "com.facticus.savesystem.Tests",
+  "references": [
+    "Unity.com.facticus.unity-save-system"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": []
+}

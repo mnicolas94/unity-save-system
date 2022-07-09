@@ -1,6 +1,6 @@
-# {{FRIENDLY_NAME}}
+# Unity Save System
 
-{{DESCRIPTION}}
+An easy to use save system for Unity
 
 ## License
 

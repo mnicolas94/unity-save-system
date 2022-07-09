@@ -1,0 +1,11 @@
+{
+  "name": "com.facticus.savesystem.Editor.Tests",
+  "references": [
+    "com.facticus.unity-save-system"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": []
+}
