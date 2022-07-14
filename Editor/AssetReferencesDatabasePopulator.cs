@@ -15,7 +15,6 @@ namespace SaveSystem.Editor
         {
             Debug.Log("Populating assets GUIDs database before build");
             PopulateDatabase();
-            
         }
 
         [MenuItem("Tools/Facticus/SaveSystem/Populate guids database")]

@@ -6,7 +6,7 @@
   "unity": "2021.1",
   "unityRelease": "",
   "dependencies": {
-    "com.facticus.utils": "0.8.13",
+    "com.facticus.utils": "0.9.5",
     "com.unity.addressables": "1.19.18"
   },
   "keywords": [],
