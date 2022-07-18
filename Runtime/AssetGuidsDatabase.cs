@@ -16,8 +16,8 @@ namespace SaveSystem
     [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "SaveSystem/AssetGuidsDatabase", order = 0)]
     public class AssetGuidsDatabase : ScriptableObjectSingleton<AssetGuidsDatabase>
     {
-        [SerializeField] private AssetToGuidDictionary _assetToGuid;
-        [SerializeField] private GuidToAssetDictionary _guidToAsset;
+        [SerializeField] private AssetToGuidDictionary _assetToGuid = new AssetToGuidDictionary();
+        [SerializeField] private GuidToAssetDictionary _guidToAsset = new GuidToAssetDictionary();
 
         public static void UseAndDispose(Action<AssetGuidsDatabase> action)
         {
