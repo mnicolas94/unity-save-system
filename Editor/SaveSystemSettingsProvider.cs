@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using Utils.Editor;
+using Utils.Editor.EditorGUIUtils;
 
 namespace SaveSystem.Editor
 {
@@ -20,7 +21,7 @@ namespace SaveSystem.Editor
                     EditorGUILayout.Space(12);
                     
                     if (existsSettings)
-                        PropertiesUtils.DrawSerializedObject(so);
+                        GUIUtils.DrawSerializedObject(so);
                     else
                     {
                         var r = EditorGUILayout.GetControlRect();
