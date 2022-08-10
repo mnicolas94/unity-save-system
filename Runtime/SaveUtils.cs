@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -63,29 +64,48 @@ namespace SaveSystem
         
         private static readonly string EXT = "dat";
         
-        private static string GetPersistentPath(IPersistent obj)
+        private static string GetPersistentPath(ScriptableObject obj)
         {
             #if UNITY_EDITOR
-                var filePath = Path.Combine(Application.persistentDataPath, $"editor-{obj.PersistentFileName}.{EXT}");
+                var filePath = Path.Combine(Application.persistentDataPath, $"editor-{GetPersistentFileName(obj)}.{EXT}");
             #else
-                var filePath = Path.Combine(Application.persistentDataPath, $"{obj.PersistentFileName}.{EXT}");
+                var filePath = Path.Combine(Application.persistentDataPath, $"{GetPersistentFileName(obj)}.{EXT}");
             #endif
             return filePath;
         }
 
-        public static IList<IPersistent> GetAllPersistentObjects()
+        public static string GetPersistentFileName(ScriptableObject obj)
+        {
+            var guid = AssetGuidsDatabase.Instance.GetGuid(obj);
+            return guid;
+        }
+
+        public static void ResetPersistentObject(ScriptableObject obj)
+        {
+            if (obj is IPersistentResetable resetable)
+            {
+                resetable.ResetToDefault();
+            }
+            else
+            {
+                var defaultObject = ScriptableObject.CreateInstance(obj.GetType());
+                ReflectionUtils.CopyTo(defaultObject, obj);
+            }
+        }
+        
+        public static IList<ScriptableObject> GetAllPersistentObjects()
         {
             var label = SaveSystemSettings.Instance.PersistentsLabel;
             var result = Addressables
-                .LoadAssetsAsync<IPersistent>(label, null)
+                .LoadAssetsAsync<ScriptableObject>(label, null)
                 .WaitForCompletion();
             return result;
         }
         
-        public static async Task<IList<IPersistent>> GetAllPersistentObjectsAsync(CancellationToken ct)
+        public static async Task<IList<ScriptableObject>> GetAllPersistentObjectsAsync(CancellationToken ct)
         {
             var label = SaveSystemSettings.Instance.PersistentsLabel;
-            var operation = Addressables.LoadAssetsAsync<IPersistent>(label, null);
+            var operation = Addressables.LoadAssetsAsync<ScriptableObject>(label, null);
             while (!operation.IsDone && !ct.IsCancellationRequested)
             {
                 await Task.Yield();
@@ -94,58 +114,57 @@ namespace SaveSystem
             return operation.Result;
         }
         
-        public static void SaveObject(IPersistent obj)
+        public static void SaveObject(ScriptableObject obj)
         {
-            AssetGuidsDatabase.UseAndDispose(database =>
-            {
-                if (obj is IPersistentCallbackReceiver receiver)
-                {
-                    receiver.OnBeforeSave(database);
-                }
-                
-                var filePath = GetPersistentPath(obj);
-                var file = File.Open(filePath, FileMode.Create);
+            var database = AssetGuidsDatabase.Instance;
             
-                var serializer = SaveSystemSettings.Instance.Serializer;
+            if (obj is IPersistentCallbackReceiver receiverBefore)
+            {
+                receiverBefore.OnBeforeSave(database);
+            }
+            
+            var filePath = GetPersistentPath(obj);
+            var file = File.Open(filePath, FileMode.Create);
+        
+            var serializer = SaveSystemSettings.Instance.Serializer;
 
-                byte[] data;
-                if (obj is IPersistentCustomSerializable customSerializable)
-                {
-                    data = customSerializable.WriteData(database);
-                }
-                else
-                {
-                    data = serializer.Serialize(obj, database);
-                }
-                
-                var version = Application.version;
-                var deviceId = SystemInfo.deviceUniqueIdentifier;
-                var encryptedData = SaveSystemSettings.Instance.EncryptData
-                    ? DesEncryption.Encrypt(data, Pass)
-                    : data;
-                var checksum = GenerateMd5(data);
-            
-                using var writer = new BinaryWriter(file);
-                writer.Write(version);
-                writer.Write(deviceId);
-                writer.Write(checksum.Length);
-                writer.Write(checksum);
-                writer.Write(encryptedData.Length);
-                writer.Write(encryptedData);
-                Debug.Log($"- SaveUtils.SaveObject: saving to {filePath}");
-            });
-            
-            if (obj is IPersistentCallbackReceiver receiver)
+            byte[] data;
+            if (obj is IPersistentCustomSerializable customSerializable)
             {
-                receiver.OnAfterSave();
+                data = customSerializable.WriteData(database);
+            }
+            else
+            {
+                data = serializer.Serialize(obj, database);
+            }
+            
+            var version = Application.version;
+            var deviceId = SystemInfo.deviceUniqueIdentifier;
+            var encryptedData = SaveSystemSettings.Instance.EncryptData
+                ? DesEncryption.Encrypt(data, Pass)
+                : data;
+            var checksum = GenerateMd5(data);
+        
+            using var writer = new BinaryWriter(file);
+            writer.Write(version);
+            writer.Write(deviceId);
+            writer.Write(checksum.Length);
+            writer.Write(checksum);
+            writer.Write(encryptedData.Length);
+            writer.Write(encryptedData);
+            Debug.Log($"- SaveUtils.SaveObject: saving to {filePath}");
+            
+            if (obj is IPersistentCallbackReceiver receiverAfter)
+            {
+                receiverAfter.OnAfterSave();
             }
         }
 
-        public static LoadReport LoadObject(IPersistent obj)
+        public static LoadReport LoadObject(ScriptableObject obj)
         {
-            if (obj is IPersistentCallbackReceiver receiver)
+            if (obj is IPersistentCallbackReceiver receiverBefore)
             {
-                receiver.OnBeforeLoad();
+                receiverBefore.OnBeforeLoad();
             }
             
             var report = new LoadReport();
@@ -187,41 +206,30 @@ namespace SaveSystem
 
             // deserialize data
             var serializer = SaveSystemSettings.Instance.Serializer;
-            AssetGuidsDatabase.UseAndDispose(database =>
-            {
-                if (obj is IPersistentCustomSerializable customSerializable)
-                {
-                    customSerializable.ReadData(decryptedData, database);
-                }
-                else
-                {
-                    serializer.Deserialize(decryptedData, obj, database);
-                }
-                
-                if (report.DifferentVersion)
-                {
-//                    obj.ReadPreviousVersion(version, dacryptedData);
-                }
+            var database = AssetGuidsDatabase.Instance;
             
-                if (obj is IPersistentCallbackReceiver receiver)
-                {
-                    receiver.OnAfterLoad(database);
-                }
-            });
+            if (obj is IPersistentCustomSerializable customSerializable)
+            {
+                customSerializable.ReadData(decryptedData, database);
+            }
+            else
+            {
+                serializer.Deserialize(decryptedData, obj, database);
+            }
+            
+            if (report.DifferentVersion)
+            {
+//                    obj.ReadPreviousVersion(version, dacryptedData);
+            }
+        
+            if (obj is IPersistentCallbackReceiver receiverAfter)
+            {
+                receiverAfter.OnAfterLoad(database);
+            }
             
             return report;
         }
 
-        public static void Save(this IPersistent obj)
-        {
-            SaveObject(obj);
-        }
-        
-        public static LoadReport Load(this IPersistent obj)
-        {
-            return LoadObject(obj);
-        }
-        
         private static byte[] GenerateMd5(byte[] data)
         {
             var md5 = MD5.Create();

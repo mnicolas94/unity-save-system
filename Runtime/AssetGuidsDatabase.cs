@@ -18,12 +18,6 @@ namespace SaveSystem
     {
         [SerializeField] private AssetToGuidDictionary _assetToGuid = new AssetToGuidDictionary();
         [SerializeField] private GuidToAssetDictionary _guidToAsset = new GuidToAssetDictionary();
-
-        public static void UseAndDispose(Action<AssetGuidsDatabase> action)
-        {
-            var database = Instance;
-            action(database);
-        }
         
         public bool ExistsGuid(string guid)
         {
@@ -42,11 +36,6 @@ namespace SaveSystem
                 return _assetToGuid[obj];
             }
 
-            var keys = _assetToGuid.Keys.ToList();
-            var strs = keys.ConvertAll(key => key == null ? "NULL" : key.ToString());
-            strs.ForEach(s => Debug.Log($"\t{s}"));
-            var id = keys.Find(key => key.name == obj.name).GetInstanceID();
-            Debug.Log($"id {id}: location id = {obj.name}-{obj.GetInstanceID()}");
             throw new ArgumentException($"Object not present in database: {obj}. _assetToGuid count {_assetToGuid.Count}");
         }
         
@@ -88,16 +77,14 @@ namespace SaveSystem
 
         public static void PopulateDatabase(List<(Object, string)> references)
         {
-            UseAndDispose(database =>
+            var database = Instance;
+            database._assetToGuid.Clear();
+            database._guidToAsset.Clear();
+            foreach (var (obj, guid) in references)
             {
-                database._assetToGuid.Clear();
-                database._guidToAsset.Clear();
-                foreach (var (obj, guid) in references)
-                {
-                    database._assetToGuid[obj] = guid;
-                    database._guidToAsset[guid] = obj;
-                }
-            });
+                database._assetToGuid[obj] = guid;
+                database._guidToAsset[guid] = obj;
+            }
         }
         
         #endif

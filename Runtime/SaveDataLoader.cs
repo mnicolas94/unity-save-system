@@ -38,7 +38,8 @@ namespace SaveSystem
             for (int i = 0; i < count; i++)
             {
                 var persistent = persistentObjects[i];
-                Debug.Log($"- SaveDataLoader.LoadSaveDataAsync: loading {persistent.PersistentFileName}");
+                var fileName = persistent.GetPersistentFileName();
+                Debug.Log($"- SaveDataLoader.LoadSaveDataAsync: loading {fileName}");
                 var loadReport = new SaveUtils.LoadReport{Success = false};
                 try
                 {
@@ -46,7 +47,7 @@ namespace SaveSystem
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"An exception was thrown during data loading: {persistent.PersistentFileName}");
+                    Debug.LogError($"An exception was thrown during data loading: {fileName}");
                     Debug.LogError(e.ToString());
                 }
                 

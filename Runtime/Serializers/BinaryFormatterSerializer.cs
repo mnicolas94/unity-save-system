@@ -3,13 +3,14 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using OdinSerializer.OdinSerializer.Utilities;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SaveSystem.Serializers
 {
     public class BinaryFormatterSerializer : ISerializer
     {
-        public byte[] Serialize(IPersistent obj, AssetGuidsDatabase guidsDatabase)
+        public byte[] Serialize(ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
         {
             var formatter = new BinaryFormatter();
             var memoryStream = new MemoryStream();
@@ -29,7 +30,7 @@ namespace SaveSystem.Serializers
             return bytes;
         }
 
-        public void Deserialize(byte[] data, IPersistent obj, AssetGuidsDatabase guidsDatabase)
+        public void Deserialize(byte[] data, ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
         {
             var formatter = new BinaryFormatter();
             var ss = new SurrogateSelector();

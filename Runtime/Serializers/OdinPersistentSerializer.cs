@@ -12,41 +12,38 @@ namespace SaveSystem.Serializers
     {
         [SerializeField] private DataFormat _format;
         
-        public byte[] Serialize(IPersistent obj, AssetGuidsDatabase guidsDatabase)
+        public byte[] Serialize(ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
         {
             var context = new SerializationContext
             {
-                StringReferenceResolver = new GuidsReferenceResolver(guidsDatabase)
+                StringReferenceResolver = new GuidsReferenceResolver(guidsDatabase, obj)
             };
             byte[] bytes = SerializationUtility.SerializeValue(obj, _format, context);
             return bytes;
         }
 
-        public void Deserialize(byte[] data, IPersistent obj, AssetGuidsDatabase guidsDatabase)
+        public void Deserialize(byte[] data, ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
         {
             var context = new DeserializationContext()
             {
-                StringReferenceResolver = new GuidsReferenceResolver(guidsDatabase)
+                StringReferenceResolver = new GuidsReferenceResolver(guidsDatabase, obj)
             };
-            var loaded = SerializationUtility.DeserializeValue<IPersistent>(data, _format, context);
-            var fields = loaded.GetType().GetRuntimeFields().ToArray();
-            foreach (var field in fields)
-            {
-                var value = field.GetValue(loaded);
-                field.SetValue(obj, value);
-            }
+            var loaded = SerializationUtility.DeserializeValue<ScriptableObject>(data, _format, context);
+            ReflectionUtils.CopyTo(loaded, obj);
         }
     }
 
     public class GuidsReferenceResolver : IExternalStringReferenceResolver
     {
         private AssetGuidsDatabase _database;
+        private ScriptableObject _parent;
         
-        public GuidsReferenceResolver(AssetGuidsDatabase database)
+        public GuidsReferenceResolver(AssetGuidsDatabase database, ScriptableObject parent)
         {
             _database = database;
+            _parent = parent;
         }
-        
+
         public IExternalStringReferenceResolver NextResolver { get; set; }
         public bool TryResolveReference(string id, out object value)
         {
@@ -60,7 +57,8 @@ namespace SaveSystem.Serializers
         public bool CanReference(object value, out string id)
         {
             id = null;
-            if (value is Object obj && !(value is IPersistent))
+            bool isParent = ReferenceEquals(value, _parent);
+            if (value is Object obj && !isParent)
             {
                 id = _database.TryGetGuid(obj, out bool exists);
                 if (!exists)

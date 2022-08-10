@@ -10,7 +10,7 @@ namespace SaveSystem.Editor
             var persistentObjects = SaveUtils.GetAllPersistentObjects();
             foreach (var persistent in persistentObjects)
             {
-                persistent.ResetToDefault();
+                SaveUtils.ResetPersistentObject(persistent);
             }
         }
     }
