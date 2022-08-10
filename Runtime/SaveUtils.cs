@@ -113,6 +113,15 @@ namespace SaveSystem
 
             return operation.Result;
         }
+
+        public static void SaveAll()
+        {
+            var persistents = GetAllPersistentObjects();
+            foreach (var persistent in persistents)
+            {
+                persistent.Save();
+            }
+        }
         
         public static void SaveObject(ScriptableObject obj)
         {
