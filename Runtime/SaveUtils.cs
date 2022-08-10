@@ -114,17 +114,19 @@ namespace SaveSystem
             return operation.Result;
         }
 
-        public static void SaveAll()
+        public static async void SaveAll()
         {
             var persistents = GetAllPersistentObjects();
             foreach (var persistent in persistents)
             {
-                persistent.Save();
+                await persistent.Save();
             }
         }
         
-        public static void SaveObject(ScriptableObject obj)
+        public static async Task SaveObject(ScriptableObject obj)
         {
+            await Task.Yield();  // this is to allow this function to run asynchronously
+            
             var database = AssetGuidsDatabase.Instance;
             
             if (obj is IPersistentCallbackReceiver receiverBefore)
@@ -169,8 +171,10 @@ namespace SaveSystem
             }
         }
 
-        public static LoadReport LoadObject(ScriptableObject obj)
+        public static async Task<LoadReport> LoadObject(ScriptableObject obj)
         {
+            await Task.Yield();  // this is to allow this function to run asynchronously
+            
             if (obj is IPersistentCallbackReceiver receiverBefore)
             {
                 receiverBefore.OnBeforeLoad();

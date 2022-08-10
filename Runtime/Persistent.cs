@@ -1,17 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SaveSystem
 {
     public static class Persistent
     {
-        public static void Save(this ScriptableObject obj)
+        public static async Task Save(this ScriptableObject obj)
         {
-            SaveUtils.SaveObject(obj);
+            await SaveUtils.SaveObject(obj);
         }
         
-        public static SaveUtils.LoadReport Load(this ScriptableObject obj)
+        public static async Task<SaveUtils.LoadReport> Load(this ScriptableObject obj)
         {
-            return SaveUtils.LoadObject(obj);
+            return await SaveUtils.LoadObject(obj);
         }
 
         public static string GetPersistentFileName(this ScriptableObject obj)
