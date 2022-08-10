@@ -43,7 +43,7 @@ namespace SaveSystem
                 var loadReport = new SaveUtils.LoadReport{Success = false};
                 try
                 {
-                    loadReport = persistent.Load();
+                    loadReport = await persistent.Load();
                 }
                 catch (Exception e)
                 {
@@ -54,7 +54,7 @@ namespace SaveSystem
                 if (!loadReport.Success)
                 {
                     persistent.ResetToDefault();
-                    persistent.Save();
+                    await persistent.Save();
                 }
                 
                 Debug.Log($"- SaveDataLoader.LoadSaveDataAsync: load report:\n{loadReport.ToString()}");
