@@ -27,12 +27,12 @@ namespace SaveSystem
 
         private async void LoadSaveDataAsync(CancellationToken ct)
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             await Task.Yield();
             _onLoadingProgress.Invoke(0.9f);
-            #else
+#else
             float loadPersistentsProgress = 0.5f;
-            var persistentObjects = await SaveUtils.GetAllPersistentObjectsAsync(ct);
+            var persistentObjects = SaveUtils.GetAllPersistentObjects();
             _onLoadingProgress.Invoke(loadPersistentsProgress);
             int count = persistentObjects.Count;
             for (int i = 0; i < count; i++)
@@ -66,7 +66,7 @@ namespace SaveSystem
                 float progress = loadPersistentsProgress + (float)(i + 1) / count * (1 - loadPersistentsProgress);
                 _onLoadingProgress.Invoke(progress);
             }
-            #endif
+#endif
             _onLoadingFinish.Invoke();
         }
     }

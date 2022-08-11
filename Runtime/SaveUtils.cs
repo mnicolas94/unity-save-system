@@ -95,23 +95,7 @@ namespace SaveSystem
         
         public static IList<ScriptableObject> GetAllPersistentObjects()
         {
-            var label = SaveSystemSettings.Instance.PersistentsLabel;
-            var result = Addressables
-                .LoadAssetsAsync<ScriptableObject>(label, null)
-                .WaitForCompletion();
-            return result;
-        }
-        
-        public static async Task<IList<ScriptableObject>> GetAllPersistentObjectsAsync(CancellationToken ct)
-        {
-            var label = SaveSystemSettings.Instance.PersistentsLabel;
-            var operation = Addressables.LoadAssetsAsync<ScriptableObject>(label, null);
-            while (!operation.IsDone && !ct.IsCancellationRequested)
-            {
-                await Task.Yield();
-            }
-
-            return operation.Result;
+            return SaveSystemSettings.Instance.PersistentObjects;
         }
 
         public static async void SaveAll()
