@@ -7,7 +7,7 @@ using Utils;
 
 namespace SaveSystem
 {
-    [CreateAssetMenu(fileName = "SaveSystemSettings", menuName = "SaveSystem/SaveSystemSettings")]
+    [CreateAssetMenu(fileName = "SaveSystemSettings", menuName = "Facticus/Save system/SaveSystemSettings")]
     public class SaveSystemSettings : ScriptableObjectSingleton<SaveSystemSettings>
     {
         [Header("Serialization")]

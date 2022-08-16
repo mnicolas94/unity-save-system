@@ -13,7 +13,7 @@ namespace SaveSystem
     [Serializable]
     public class GuidToAssetDictionary : SerializableDictionary<string, Object>{}
     
-    [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "SaveSystem/AssetGuidsDatabase", order = 0)]
+    [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "Facticus/Save system/AssetGuidsDatabase", order = 0)]
     public class AssetGuidsDatabase : ScriptableObjectSingleton<AssetGuidsDatabase>
     {
         [SerializeField] private AssetToGuidDictionary _assetToGuid = new AssetToGuidDictionary();
