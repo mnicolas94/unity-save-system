@@ -15,7 +15,7 @@ namespace SaveSystem
             return await SaveUtils.LoadObject(obj);
         }
 
-        public static async void LoadOrCreate(this ScriptableObject obj)
+        public static async Task LoadOrCreate(this ScriptableObject obj)
         {
             var report = await SaveUtils.LoadObject(obj);
             if (!report.Success)
