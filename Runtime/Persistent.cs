@@ -15,6 +15,16 @@ namespace SaveSystem
             return await SaveUtils.LoadObject(obj);
         }
 
+        public static async void LoadOrCreate(this ScriptableObject obj)
+        {
+            var report = await SaveUtils.LoadObject(obj);
+            if (!report.Success)
+            {
+                obj.ResetToDefault();
+                await obj.Save();
+            }
+        }
+
         public static string GetPersistentFileName(this ScriptableObject obj)
         {
             return SaveUtils.GetPersistentFileName(obj);
