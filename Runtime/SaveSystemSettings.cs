@@ -15,19 +15,19 @@ namespace SaveSystem
         [SerializeField] private bool _encryptData;
         
         [Header("Asset Guid's database")]
-        [SerializeField] private string[] _searchDatabaseAssetsInPaths;
+        [SerializeField] private List<string> _searchDatabaseAssetsInPaths;
+        [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
 
         [Header("Persistents")]
-        [SerializeField] private AssetLabelReference _persistentsLabel;
         [SerializeField] private List<ScriptableObject> _persistentObjects;
         
-        public AssetLabelReference PersistentsLabel => _persistentsLabel;
-
         public ISerializer Serializer => _serializer;
 
         public bool EncryptData => _encryptData;
 
-        public string[] SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
+        public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
+
+        public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
 
         public List<ScriptableObject> PersistentObjects => _persistentObjects;
     }
