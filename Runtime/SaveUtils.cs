@@ -64,7 +64,7 @@ namespace SaveSystem
         
         private static readonly string EXT = "dat";
         
-        private static string GetPersistentPath(ScriptableObject obj)
+        public static string GetPersistentPath(ScriptableObject obj)
         {
             #if UNITY_EDITOR
                 var filePath = Path.Combine(Application.persistentDataPath, $"editor-{GetPersistentFileName(obj)}.{EXT}");

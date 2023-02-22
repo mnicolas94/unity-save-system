@@ -33,7 +33,7 @@ namespace SaveSystem
 
         public static bool IsSaved(this ScriptableObject obj)
         {
-            var path = GetPersistentFileName(obj);
+            var path = SaveUtils.GetPersistentPath(obj);
             return File.Exists(path);
         }
         
