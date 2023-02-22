@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SaveSystem
@@ -28,6 +29,12 @@ namespace SaveSystem
         public static string GetPersistentFileName(this ScriptableObject obj)
         {
             return SaveUtils.GetPersistentFileName(obj);
+        }
+
+        public static bool IsSaved(this ScriptableObject obj)
+        {
+            var path = GetPersistentFileName(obj);
+            return File.Exists(path);
         }
         
         public static void ResetToDefault(this ScriptableObject obj)
