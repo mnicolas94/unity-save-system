@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using OdinSerializer.OdinSerializer;
 using OdinSerializer.OdinSerializer.Utilities;
 using SaveSystem.Serializers;
@@ -28,6 +29,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using IFormatter = OdinSerializer.OdinSerializer.IFormatter;
 using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
@@ -779,7 +781,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                         {
                             try
                             {
-                                var instance = Activator.CreateInstance(arg);
+                                var instance = FormatterServices.GetUninitializedObject(arg);
                                 Serialize(instance);
                             }
                             catch (Exception e)
