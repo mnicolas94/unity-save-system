@@ -775,14 +775,18 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                         this.RegisterType(arg);
                         
                         // ensure types of lists get properly scanned when lists are empty
-                        try
+                        if (!type.IsAssignableFrom(typeof(Object)))
                         {
-                            var instance = Activator.CreateInstance(arg);
-                            Serialize(instance);
-                        }
-                        catch
-                        {
-                            // ignored
+                            try
+                            {
+                                var instance = Activator.CreateInstance(arg);
+                                Serialize(instance);
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.LogWarning(e.Message);
+                                // ignored
+                            }
                         }
                     }
                 }
