@@ -28,6 +28,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
 
@@ -652,11 +653,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                 }
                 else
                 {
-                    var context = new SerializationContext
-                    {
-                        StringReferenceResolver = new GuidsReferenceResolver(AssetGuidsDatabase.Instance, obj)
-                    };
-                    OdinSerializer.OdinSerializer.SerializationUtility.SerializeValue(obj, DataFormat.Binary, context);
+                    Serialize(obj);
                 }
             }
             finally
@@ -664,6 +661,25 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                 this.allowRegisteringScannedTypes = false;
                 UnitySerializationUtility.ForceEditorModeSerialization = formerForceEditorModeSerialization;
             }
+        }
+
+        private static void Serialize(object obj)
+        {
+            Serialize(obj, null);
+        }
+        
+        private static void Serialize(Object obj)
+        {
+            Serialize(obj, obj);
+        }
+        
+        private static void Serialize(object obj, Object parent)
+        {
+            var context = new SerializationContext
+            {
+                StringReferenceResolver = new GuidsReferenceResolver(AssetGuidsDatabase.Instance, parent)
+            };
+            OdinSerializer.OdinSerializer.SerializationUtility.SerializeValue(obj, DataFormat.Binary, context);
         }
 
         public List<Type> EndScan()
@@ -750,18 +766,25 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             //if (type.IsAbstract || type.IsInterface) return;
             if (type.IsGenericType && (type.IsGenericTypeDefinition || !type.IsFullyConstructedGenericType())) return;
 
-            //if (this.seenSerializedTypes.Add(type))
-            //{
-            //    Debug.Log("Added " + type.GetNiceFullName());
-            //}
-
-            this.seenSerializedTypes.Add(type);
-
-            if (type.IsGenericType)
+            if (this.seenSerializedTypes.Add(type))
             {
-                foreach (var arg in type.GetGenericArguments())
+                if (type.IsGenericType)
                 {
-                    this.RegisterType(arg);
+                    foreach (var arg in type.GetGenericArguments())
+                    {
+                        this.RegisterType(arg);
+                        
+                        // ensure types of lists get properly scanned when lists are empty
+                        try
+                        {
+                            var instance = Activator.CreateInstance(type);
+                            Serialize(instance);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+                    }
                 }
             }
         }
