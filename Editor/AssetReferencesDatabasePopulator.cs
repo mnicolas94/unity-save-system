@@ -22,7 +22,7 @@ namespace SaveSystem.Editor
         [MenuItem("Tools/Facticus/SaveSystem/Populate guids database")]
         public static void PopulateDatabase()
         {
-            var objectsGuids = SaveSystemSettings.Instance.GetDataObjectsAndGuids();
+            var objectsGuids = SaveDataEditorUtils.GetDataObjectsAndGuids();
             AssetGuidsDatabase.PopulateDatabase(objectsGuids);
             EditorUtility.SetDirty(AssetGuidsDatabase.Instance);
             AssetDatabase.SaveAssets();

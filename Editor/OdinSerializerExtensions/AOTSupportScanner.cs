@@ -60,7 +60,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
         public bool ScanSaveSystemAssets(bool showProgressBar)
         {
             // get save system tracked assets
-            var assets = SaveSystemSettings.Instance.GetDataObjectsAndGuids()
+            var assets = SaveDataEditorUtils.GetDataObjectsAndGuids()
                 .ConvertAll(objGuid => objGuid.obj);
             
             try
