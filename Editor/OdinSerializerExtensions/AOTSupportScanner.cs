@@ -777,7 +777,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                         this.RegisterType(arg);
                         
                         // ensure types of lists get properly scanned when lists are empty
-                        if (!arg.IsAssignableFrom(typeof(Object)))
+                        if (!typeof(Object).IsAssignableFrom(arg))
                         {
                             try
                             {
