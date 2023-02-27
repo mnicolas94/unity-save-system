@@ -19,7 +19,6 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             }
         }
 
-        [MenuItem("Tools/Facticus/SaveSystem/Scan types and generate DLL")]
         public static void ScanAndGenerateDll()
         {
             if (AOTSupportUtilities.ScanProjectForSerializedTypes(out var types))
