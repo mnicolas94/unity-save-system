@@ -12,14 +12,11 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
 
         public void OnPreprocessBuild(BuildReport report)
         {
-#if ENABLE_IL2CPP
-            Debug.Log("in IL2CPP");
-#else
-            Debug.Log("NOT in IL2CPP");
-#endif
-            
-            Debug.Log("Populating assets GUIDs database before build");
-            ScanAndGenerateDll();
+            var scriptingBackend = PlayerSettings.GetScriptingBackend(report.summary.platformGroup);
+            if (scriptingBackend == ScriptingImplementation.IL2CPP)
+            {
+                ScanAndGenerateDll();
+            }
         }
 
         [MenuItem("Tools/Facticus/SaveSystem/Scan types and generate DLL")]
