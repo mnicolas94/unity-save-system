@@ -654,7 +654,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                 {
                     var context = new SerializationContext
                     {
-                        StringReferenceResolver = new GuidsReferenceResolver(AssetGuidsDatabase.Instance, (ScriptableObject)obj)
+                        StringReferenceResolver = new GuidsReferenceResolver(AssetGuidsDatabase.Instance, obj)
                     };
                     OdinSerializer.OdinSerializer.SerializationUtility.SerializeValue(obj, DataFormat.Binary, context);
                 }

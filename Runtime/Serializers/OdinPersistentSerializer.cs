@@ -36,9 +36,9 @@ namespace SaveSystem.Serializers
     public class GuidsReferenceResolver : IExternalStringReferenceResolver
     {
         private AssetGuidsDatabase _database;
-        private ScriptableObject _parent;
+        private Object _parent;
         
-        public GuidsReferenceResolver(AssetGuidsDatabase database, ScriptableObject parent)
+        public GuidsReferenceResolver(AssetGuidsDatabase database, Object parent)
         {
             _database = database;
             _parent = parent;
@@ -57,8 +57,9 @@ namespace SaveSystem.Serializers
         public bool CanReference(object value, out string id)
         {
             id = null;
+            bool parentIsScriptableObject = _parent is ScriptableObject;
             bool isParent = ReferenceEquals(value, _parent);
-            if (value is Object obj && !isParent)
+            if (value is Object obj && (!isParent || !parentIsScriptableObject))
             {
                 id = _database.TryGetGuid(obj, out bool exists);
                 if (!exists)
