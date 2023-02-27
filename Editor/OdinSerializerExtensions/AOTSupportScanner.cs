@@ -777,7 +777,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                         // ensure types of lists get properly scanned when lists are empty
                         try
                         {
-                            var instance = Activator.CreateInstance(type);
+                            var instance = Activator.CreateInstance(arg);
                             Serialize(instance);
                         }
                         catch
