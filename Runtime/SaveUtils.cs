@@ -147,7 +147,7 @@ namespace SaveSystem
             writer.Write(checksum);
             writer.Write(encryptedData.Length);
             writer.Write(encryptedData);
-            Debug.Log($"- SaveUtils.SaveObject: saving to {filePath}");
+            DebugLog($"- SaveUtils.SaveObject: saving to {filePath}");
             
             if (obj is IPersistentCallbackReceiver receiverAfter)
             {
@@ -167,7 +167,7 @@ namespace SaveSystem
             var report = new LoadReport();
             var filePath = GetPersistentPath(obj);
             report.FilePath = filePath;
-            Debug.Log($"- SaveUtils.LoadObject: loading from {filePath}");
+            DebugLog($"- SaveUtils.LoadObject: loading from {filePath}");
 
             if(!File.Exists(filePath))
             {
@@ -249,6 +249,14 @@ namespace SaveSystem
                 sb.Append(hash[i].ToString("X2"));
             }
             return sb.ToString();
+        }
+        
+        private static void DebugLog(string message)
+        {
+            if (SaveSystemSettings.Instance.DebugLogging)
+            {
+                Debug.Log(message);
+            }
         }
     }
 }

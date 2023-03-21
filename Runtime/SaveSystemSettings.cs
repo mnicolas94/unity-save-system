@@ -16,6 +16,9 @@ namespace SaveSystem
         [SerializeField] private List<string> _searchDatabaseAssetsInPaths;
         [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
 
+        [Header("Debug")]
+        [SerializeField] private bool _debugLogging;
+        
         [Header("Persistents")]
         [SerializeField] private List<ScriptableObject> _persistentObjects;
         
@@ -26,6 +29,8 @@ namespace SaveSystem
         public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
 
         public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
+
+        public bool DebugLogging => _debugLogging;
 
         public List<ScriptableObject> PersistentObjects => _persistentObjects;
     }
