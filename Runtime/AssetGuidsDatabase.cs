@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using Utils;
@@ -18,6 +19,9 @@ namespace SaveSystem
     {
         [SerializeField] private AssetToGuidDictionary _assetToGuid = new AssetToGuidDictionary();
         [SerializeField] private GuidToAssetDictionary _guidToAsset = new GuidToAssetDictionary();
+
+        public ReadOnlyCollection<Object> Assets => _assetToGuid.Keys.ToList().AsReadOnly();
+        public ReadOnlyCollection<string> Guids => _guidToAsset.Keys.ToList().AsReadOnly();
         
         public bool ExistsGuid(string guid)
         {
