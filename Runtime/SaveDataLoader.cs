@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,16 +14,25 @@ namespace SaveSystem
 
         private CancellationTokenSource _cts;
 
-        private void Start()
+        private void OnEnable()
         {
             _cts = new CancellationTokenSource();
-            LoadSaveDataAsync(_cts.Token);
         }
 
         private void OnDisable()
         {
-            _cts.Cancel();
+            if (!_cts.IsCancellationRequested)
+            {
+                _cts.Cancel();
+            }
+
             _cts.Dispose();
+            _cts = null;
+        }
+        
+        private void Start()
+        {
+            LoadSaveDataAsync(_cts.Token);
         }
 
         private async void LoadSaveDataAsync(CancellationToken ct)
