@@ -16,7 +16,7 @@ namespace SaveSystem
             return await SaveUtils.LoadObject(obj);
         }
 
-        public static async Task LoadOrCreate(this ScriptableObject obj)
+        public static async Task<SaveUtils.LoadReport> LoadOrCreate(this ScriptableObject obj)
         {
             var report = await SaveUtils.LoadObject(obj);
             if (!report.Success)
@@ -24,6 +24,8 @@ namespace SaveSystem
                 obj.ResetToDefault();
                 await obj.Save();
             }
+
+            return report;
         }
 
         public static string GetPersistentFileName(this ScriptableObject obj)
