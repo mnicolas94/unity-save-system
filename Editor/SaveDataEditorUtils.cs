@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SaveSystem.Editor
@@ -16,6 +18,38 @@ namespace SaveSystem.Editor
             {
                 SaveUtils.ResetPersistentObject(persistent);
             }
+        }
+
+        [MenuItem("Assets/Facticus/SaveSystem/Reset data")]
+        public static void ResetObjectData()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            foreach (var obj in selected)
+            {
+                SaveUtils.ResetPersistentObject(obj);
+            }
+        }
+        
+        [MenuItem("Assets/Facticus/SaveSystem/Remove data")]
+        public static void RemoveObjectData()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            foreach (var obj in selected)
+            {
+                var path = SaveUtils.GetPersistentPath(obj);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+        }
+
+        [MenuItem("Assets/Facticus/SaveSystem/Remove data", true)]
+        [MenuItem("Assets/Facticus/SaveSystem/Reset data", true)]
+        public static bool ValidateMenus()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            return selected.Length > 0;
         }
         
         public static List<(Object obj, string guid)> GetDataObjectsAndGuids()
