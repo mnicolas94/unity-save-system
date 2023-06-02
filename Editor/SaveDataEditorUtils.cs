@@ -21,6 +21,26 @@ namespace SaveSystem.Editor
             }
         }
 
+        [MenuItem("Assets/Facticus/SaveSystem/Save")]
+        public static void SaveObjectData()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            foreach (var obj in selected)
+            {
+                obj.Save();
+            }
+        }
+        
+        [MenuItem("Assets/Facticus/SaveSystem/Load")]
+        public static void LoadObjectData()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            foreach (var obj in selected)
+            {
+                obj.Load();
+            }
+        }
+        
         [MenuItem("Assets/Facticus/SaveSystem/Reset data")]
         public static void ResetObjectData()
         {
@@ -45,6 +65,8 @@ namespace SaveSystem.Editor
             }
         }
 
+        [MenuItem("Assets/Facticus/SaveSystem/Save", true)]
+        [MenuItem("Assets/Facticus/SaveSystem/Load", true)]
         [MenuItem("Assets/Facticus/SaveSystem/Remove data", true)]
         [MenuItem("Assets/Facticus/SaveSystem/Reset data", true)]
         public static bool ValidateMenus()
