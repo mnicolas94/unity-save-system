@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build.Content;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -64,13 +65,30 @@ namespace SaveSystem.Editor
             filesGuids.RemoveAll(guid => ignoreGuids.Contains(guid));
 
             // get objects
-            var objectsGuids = filesGuids.ConvertAll(guid =>
+            var objectsGuids = filesGuids.SelectMany(guid =>
             {
                 string objPath = AssetDatabase.GUIDToAssetPath(guid);
-                var obj = AssetDatabase.LoadAssetAtPath<Object>(objPath);
-                return (obj, guid);
+                var isSceneAsset = AssetDatabase.GetMainAssetTypeAtPath(objPath) == typeof(SceneAsset);
+                if (isSceneAsset)
+                {
+                    var obj = AssetDatabase.LoadAssetAtPath<Object>(objPath);
+                    return new[] { (obj, guid) };
+                }
+                else
+                {
+                    var objects = AssetDatabase.LoadAllAssetsAtPath(objPath);
+                    var objectsGuids = objects.Select(obj =>
+                    {
+                        var isMain = AssetDatabase.IsMainAsset(obj);
+                        AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out var g, out long localFileId);
+                        var databaseId = isMain ? guid : $"{guid}---{localFileId}";
+                        return (obj, databaseId);
+                    });
+
+                    return objectsGuids;
+                }
             });
-            return objectsGuids;
+            return objectsGuids.ToList();
         }
         
         private static List<string> GetFilesGuids(List<string> paths)
