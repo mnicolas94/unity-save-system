@@ -15,6 +15,7 @@ namespace SaveSystem
         [Header("Asset Guid's database")]
         [SerializeField] private List<string> _searchDatabaseAssetsInPaths;
         [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
+        [SerializeField] private bool _populateDatabaseBeforeEnterPlayMode;
 
         [Header("Debug")]
         [SerializeField] private bool _debugLogging;
@@ -29,6 +30,8 @@ namespace SaveSystem
         public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
 
         public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
+
+        public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
 
         public bool DebugLogging => _debugLogging;
 
