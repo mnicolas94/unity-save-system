@@ -22,6 +22,7 @@ namespace SaveSystem.Editor
         }
 
         [MenuItem("Assets/Facticus/SaveSystem/Save", false, 0)]
+        [MenuItem("CONTEXT/ScriptableObject/Save", false, 100)]
         public static void SaveObjectData()
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
@@ -32,6 +33,7 @@ namespace SaveSystem.Editor
         }
         
         [MenuItem("Assets/Facticus/SaveSystem/Load", false, 0)]
+        [MenuItem("CONTEXT/ScriptableObject/Load", false, 100)]
         public static void LoadObjectData()
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
@@ -42,6 +44,7 @@ namespace SaveSystem.Editor
         }
         
         [MenuItem("Assets/Facticus/SaveSystem/Reset data", false, 0)]
+        [MenuItem("CONTEXT/ScriptableObject/Reset data", false, 100)]
         public static void ResetObjectData()
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
@@ -52,6 +55,7 @@ namespace SaveSystem.Editor
         }
         
         [MenuItem("Assets/Facticus/SaveSystem/Remove data", false, 0)]
+        [MenuItem("CONTEXT/ScriptableObject/Remove data", false, 100)]
         public static void RemoveObjectData()
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
@@ -63,6 +67,14 @@ namespace SaveSystem.Editor
                     File.Delete(path);
                 }
             }
+        }
+        
+        [MenuItem("Assets/Facticus/SaveSystem/Remove and reset data", false, 0)]
+        [MenuItem("CONTEXT/ScriptableObject/Remove and reset data", false, 100)]
+        public static void RemoveAndResetObjectData()
+        {
+            ResetObjectData();
+            RemoveObjectData();
         }
 
         [MenuItem("Assets/Facticus/SaveSystem/Save", true)]
