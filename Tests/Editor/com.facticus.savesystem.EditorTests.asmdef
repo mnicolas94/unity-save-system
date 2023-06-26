@@ -1,11 +1,25 @@
 {
-  "name": "com.facticus.savesystem.Editor.Tests",
-  "references": [
-    "com.facticus.unity-save-system"
-  ],
-  "optionalUnityReferences": [
-    "TestAssemblies"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": []
+    "name": "com.facticus.savesystem.Editor.Tests",
+    "rootNamespace": "",
+    "references": [
+        "com.facticus.savesystem",
+        "com.facticus.savesystem.Editor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

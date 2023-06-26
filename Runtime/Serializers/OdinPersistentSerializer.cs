@@ -45,6 +45,7 @@ namespace SaveSystem.Serializers
         }
 
         public IExternalStringReferenceResolver NextResolver { get; set; }
+        
         public bool TryResolveReference(string id, out object value)
         {
             value = null;

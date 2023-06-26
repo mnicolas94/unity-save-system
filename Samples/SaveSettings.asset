@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5d6fc6f654dd5749a20c09a3cc606f8, type: 3}
+  m_Name: SaveSettings
+  m_EditorClassIdentifier: 
+  _serializer:
+    rid: 0
+  _encryptData: 0
+  _searchDatabaseAssetsInPaths:
+  - Assets/Samples
+  - Assets/SaveSystem/Tests/Editor
+  _ignoreDatabaseAssetsInPaths: []
+  _populateDatabaseBeforeEnterPlayMode: 1
+  _debugLogging: 0
+  _persistentObjects:
+  - {fileID: 11400000, guid: 838d432941c4911479913d8da0236760, type: 2}
+  - {fileID: 11400000, guid: 208746278a96d5d419f3c5f3711dce4e, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 0
+      type: {class: OdinPersistentSerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
+      data:
+        _format: 0
