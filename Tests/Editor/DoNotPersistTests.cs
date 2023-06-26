@@ -38,15 +38,19 @@ namespace SaveSystem.Tests.Editor
         {
             // arrange
             _data.S = "45";
+            _data.F = 45.0f;
             
             // act
             yield return RunTaskAsCoroutine(_data.Save());
             _data.S = "46";
+            _data.F = 46.0f;
             yield return RunTaskAsCoroutine(_data.Load());
             
             // assert
-            var expected = "46";
-            Assert.AreEqual(expected, _data.S);
+            var expectedS = "46";
+            var expectedF = 46.0f;
+            Assert.AreEqual(expectedS, _data.S);
+            Assert.AreEqual(expectedF, _data.F);
         }
 
         private IEnumerator RunTaskAsCoroutine(Task task)
