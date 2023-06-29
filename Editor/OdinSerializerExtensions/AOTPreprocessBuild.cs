@@ -21,7 +21,8 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             }
             else
             {
-                var dllPath = Path.Combine(Application.dataPath, DllName);
+                // remove AOT dll to avoid old assemblies to be referenced
+                var dllPath = Path.Combine(Application.dataPath, $"{DllName}.dll");
                 if (File.Exists(dllPath))
                 {
                     File.Delete(dllPath);
