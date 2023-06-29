@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
 {
     public class AOTPreprocessBuild : IPreprocessBuildWithReport
     {
+        private const string DllName = "com.facticus.savesystem.aot";
         public int callbackOrder => 0;
 
         public void OnPreprocessBuild(BuildReport report)
@@ -17,6 +19,14 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             {
                 ScanAndGenerateDll();
             }
+            else
+            {
+                var dllPath = Path.Combine(Application.dataPath, DllName);
+                if (File.Exists(dllPath))
+                {
+                    File.Delete(dllPath);
+                }
+            }
         }
 
         public static void ScanAndGenerateDll()
@@ -25,7 +35,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             {
                 OdinSerializer.OdinSerializer.Editor.AOTSupportUtilities.GenerateDLL(
                     Application.dataPath,
-                    "com.facticus.savesystem.aot",
+                    DllName,
                     types
                 );
             }
