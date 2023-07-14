@@ -93,20 +93,6 @@ namespace SaveSystem
             }
         }
         
-        public static IList<ScriptableObject> GetAllPersistentObjects()
-        {
-            return SaveSystemSettings.Instance.PersistentObjects;
-        }
-
-        public static async void SaveAll()
-        {
-            var persistents = GetAllPersistentObjects();
-            foreach (var persistent in persistents)
-            {
-                await persistent.Save();
-            }
-        }
-        
         public static async Task SaveObject(ScriptableObject obj)
         {
             await Task.Yield();  // this is to allow this function to run asynchronously

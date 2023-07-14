@@ -1,12 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace SaveSystem
 {
     public class SaveAllOnDisable : MonoBehaviour
     {
-        private void OnDisable()
+        [SerializeField] private List<ScriptableObject> _persistentObjects;
+        private async void OnDisable()
         {
-            SaveUtils.SaveAll();
+            foreach (var persistentObject in _persistentObjects)
+            {
+                await persistentObject.Save();
+            }
         }
     }
 }

@@ -20,9 +20,6 @@ namespace SaveSystem
         [Header("Debug")]
         [SerializeField] private bool _debugLogging;
         
-        [Header("Persistents")]
-        [SerializeField] private List<ScriptableObject> _persistentObjects;
-        
         public ISerializer Serializer => _serializer;
 
         public bool EncryptData => _encryptData;
@@ -34,7 +31,5 @@ namespace SaveSystem
         public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
 
         public bool DebugLogging => _debugLogging;
-
-        public List<ScriptableObject> PersistentObjects => _persistentObjects;
     }
 }

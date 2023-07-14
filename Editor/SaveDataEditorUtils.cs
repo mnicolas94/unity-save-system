@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.Build.Content;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -11,16 +10,6 @@ namespace SaveSystem.Editor
 {
     public static class SaveDataEditorUtils
     {
-        [MenuItem("Tools/Facticus/SaveSystem/Reset data")]
-        public static void ResetData()
-        {
-            var persistentObjects = SaveUtils.GetAllPersistentObjects();
-            foreach (var persistent in persistentObjects)
-            {
-                SaveUtils.ResetPersistentObject(persistent);
-            }
-        }
-
         [MenuItem("Assets/Facticus/SaveSystem/Save", false, 0)]
         [MenuItem("CONTEXT/ScriptableObject/Save", false, 100)]
         public static void SaveObjectData()
