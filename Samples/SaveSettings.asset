@@ -20,10 +20,14 @@ MonoBehaviour:
   - Assets/SaveSystem/Tests/Editor
   _ignoreDatabaseAssetsInPaths: []
   _populateDatabaseBeforeEnterPlayMode: 1
+  _broadcaster:
+    _onSave:
+      m_PersistentCalls:
+        m_Calls: []
+    _onLoad:
+      m_PersistentCalls:
+        m_Calls: []
   _debugLogging: 0
-  _persistentObjects:
-  - {fileID: 11400000, guid: 838d432941c4911479913d8da0236760, type: 2}
-  - {fileID: 11400000, guid: 208746278a96d5d419f3c5f3711dce4e, type: 2}
   references:
     version: 2
     RefIds:

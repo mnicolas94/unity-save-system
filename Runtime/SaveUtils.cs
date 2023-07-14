@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace SaveSystem
 {
@@ -139,6 +135,7 @@ namespace SaveSystem
             {
                 receiverAfter.OnAfterSave();
             }
+            SaveLoadBroadcaster.Instance.NotifySave(obj);
         }
 
         public static async Task<LoadReport> LoadObject(ScriptableObject obj)
@@ -202,13 +199,16 @@ namespace SaveSystem
             
             if (report.DifferentVersion)
             {
-//                    obj.ReadPreviousVersion(version, dacryptedData);
+//                    obj.ReadPreviousVersion(version, decryptedData);
             }
         
             if (obj is IPersistentCallbackReceiver receiverAfter)
             {
                 receiverAfter.OnAfterLoad(database);
             }
+
+            // notify object was loaded
+            SaveLoadBroadcaster.Instance.NotifyLoad(obj);
             
             return report;
         }

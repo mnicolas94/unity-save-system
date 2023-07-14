@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ namespace SaveSystem
             if (!report.Success)
             {
                 obj.ResetToDefault();
+                SaveLoadBroadcaster.Instance.NotifyLoad(obj);  // notify load since it was not notified in LoadObject function
                 await obj.Save();
             }
 
@@ -42,6 +44,26 @@ namespace SaveSystem
         public static void ResetToDefault(this ScriptableObject obj)
         {
             SaveUtils.ResetPersistentObject(obj);
+        }
+
+        public static void RegisterOnSaveListener(this ScriptableObject obj, Action listener)
+        {
+            SaveLoadBroadcaster.Instance.RegisterOnSaveListenerForObject(obj, listener);
+        }
+        
+        public static void UnregisterOnSaveListener(this ScriptableObject obj, Action listener)
+        {
+            SaveLoadBroadcaster.Instance.UnregisterOnSaveListenerForObject(obj, listener);
+        }
+        
+        public static void RegisterOnLoadListener(this ScriptableObject obj, Action listener)
+        {
+            SaveLoadBroadcaster.Instance.RegisterOnLoadListenerForObject(obj, listener);
+        }
+        
+        public static void UnregisterOnLoadListener(this ScriptableObject obj, Action listener)
+        {
+            SaveLoadBroadcaster.Instance.UnregisterOnLoadListenerForObject(obj, listener);
         }
     }
 }

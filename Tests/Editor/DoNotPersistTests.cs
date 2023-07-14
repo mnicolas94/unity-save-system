@@ -24,9 +24,9 @@ namespace SaveSystem.Tests.Editor
             _data.I = 45;
             
             // act
-            yield return RunTaskAsCoroutine(_data.Save());
+            yield return TestsUtils.RunTaskAsCoroutine(_data.Save());
             _data.I = 46;
-            yield return RunTaskAsCoroutine(_data.Load());
+            yield return TestsUtils.RunTaskAsCoroutine(_data.Load());
             
             // assert
             var expected = 45;
@@ -41,24 +41,16 @@ namespace SaveSystem.Tests.Editor
             _data.F = 45.0f;
             
             // act
-            yield return RunTaskAsCoroutine(_data.Save());
+            yield return TestsUtils.RunTaskAsCoroutine(_data.Save());
             _data.S = "46";
             _data.F = 46.0f;
-            yield return RunTaskAsCoroutine(_data.Load());
+            yield return TestsUtils.RunTaskAsCoroutine(_data.Load());
             
             // assert
             var expectedS = "46";
             var expectedF = 46.0f;
             Assert.AreEqual(expectedS, _data.S);
             Assert.AreEqual(expectedF, _data.F);
-        }
-
-        private IEnumerator RunTaskAsCoroutine(Task task)
-        {
-            while (!task.IsCompleted)
-            {
-                yield return null;
-            }
         }
     }
 }

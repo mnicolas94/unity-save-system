@@ -17,6 +17,9 @@ namespace SaveSystem
         [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
         [SerializeField] private bool _populateDatabaseBeforeEnterPlayMode;
 
+        [Header("Listeners")]
+        [SerializeField] private SaveLoadBroadcaster _broadcaster = new SaveLoadBroadcaster();
+        
         [Header("Debug")]
         [SerializeField] private bool _debugLogging;
         
@@ -29,6 +32,8 @@ namespace SaveSystem
         public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
 
         public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
+
+        public SaveLoadBroadcaster Broadcaster => _broadcaster;
 
         public bool DebugLogging => _debugLogging;
     }
