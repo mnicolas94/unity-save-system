@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.TestTools;
@@ -92,6 +94,46 @@ namespace SaveSystem.Tests.Editor
             
             // assert
             Assert.IsFalse(loaded);
+        }
+        
+        [UnityTest]
+        public IEnumerator WhenWaitingForObjectToBeSaved_ItEndsAfterObjectIsSaved()
+        {
+            // arrange
+            var timeout = 5000;
+            var cts = new CancellationTokenSource(timeout);
+            var ct = cts.Token;
+            
+            // act
+            yield return TestsUtils.RunTaskAsCoroutine(
+                Task.WhenAll(
+                    SaveLoadBroadcaster.Instance.WaitToBeSavedAsync(_data, ct),
+                    _data.Save()
+                )
+            );
+            
+            // assert
+            Assert.IsFalse(ct.IsCancellationRequested);
+        }
+        
+        [UnityTest]
+        public IEnumerator WhenWaitingForObjectToBeLoaded_ItEndsAfterObjectIsLoaded()
+        {
+            // arrange
+            var timeout = 5000;
+            var cts = new CancellationTokenSource(timeout);
+            var ct = cts.Token;
+            
+            // act
+            yield return TestsUtils.RunTaskAsCoroutine(
+                Task.WhenAll(
+                    SaveLoadBroadcaster.Instance.WaitToBeLoadedAsync(_data, ct),
+                    _data.Load()
+                )
+            );
+            
+            // assert
+            Assert.IsFalse(ct.IsCancellationRequested);
         }
     }
 }

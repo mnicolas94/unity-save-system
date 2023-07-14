@@ -184,7 +184,7 @@ namespace SaveSystem
             }
         }
         
-        public async Task WaitToBeLoadAsync(ScriptableObject persistent, CancellationToken ct)
+        public async Task WaitToBeLoadedAsync(ScriptableObject persistent, CancellationToken ct)
         {
             bool loaded = false;
             void OnLoad()
@@ -206,11 +206,11 @@ namespace SaveSystem
             }
         }
         
-        public async Task WaitToBeLoadOrAlreadyLoadAsync(ScriptableObject persistent, CancellationToken ct)
+        public async Task WaitToBeLoadedOrAlreadyLoadedAsync(ScriptableObject persistent, CancellationToken ct)
         {
             if (!HasBeenLoaded(persistent))
             {
-                await WaitToBeLoadAsync(persistent, ct);
+                await WaitToBeLoadedAsync(persistent, ct);
             }
         }
     }
