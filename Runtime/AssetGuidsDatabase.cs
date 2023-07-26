@@ -17,12 +17,35 @@ namespace SaveSystem
     [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "Facticus/Save system/AssetGuidsDatabase", order = 0)]
     public class AssetGuidsDatabase : ScriptableObjectSingleton<AssetGuidsDatabase>
     {
-        [SerializeField] private AssetToGuidDictionary _assetToGuid = new AssetToGuidDictionary();
-        [SerializeField] private GuidToAssetDictionary _guidToAsset = new GuidToAssetDictionary();
+        [SerializeField] private List<Object> _assets = new List<Object>();
+        [SerializeField] private List<string> _guids = new List<string>();
+        private Dictionary<Object, string> _assetToGuid;
+        private Dictionary<string, Object> _guidToAsset;
 
-        public ReadOnlyCollection<Object> Assets => _assetToGuid.Keys.ToList().AsReadOnly();
-        public ReadOnlyCollection<string> Guids => _guidToAsset.Keys.ToList().AsReadOnly();
-        
+        public ReadOnlyCollection<Object> Assets => _assets.AsReadOnly();
+        public ReadOnlyCollection<string> Guids => _guids.AsReadOnly();
+
+        protected override void OnEnableCallback()
+        {
+            InitializeLookupDictionaries();
+        }
+
+        private void InitializeLookupDictionaries()
+        {
+            _assetToGuid = new AssetToGuidDictionary();
+            _guidToAsset = new GuidToAssetDictionary();
+            for (int i = 0; i < _assets.Count; i++)
+            {
+                var asset = _assets[i];
+                var guid = _guids[i];
+                if (asset == null)
+                    continue;
+                
+                _assetToGuid[asset] = guid;
+                _guidToAsset[guid] = asset;
+            }
+        }
+
         public bool ExistsGuid(string guid)
         {
             return _guidToAsset.ContainsKey(guid);
@@ -82,13 +105,15 @@ namespace SaveSystem
         public static void PopulateDatabase(List<(Object, string)> references)
         {
             var database = Instance;
-            database._assetToGuid.Clear();
-            database._guidToAsset.Clear();
+            database._assets.Clear();
+            database._guids.Clear();
             foreach (var (obj, guid) in references)
             {
-                database._assetToGuid[obj] = guid;
-                database._guidToAsset[guid] = obj;
+                database._assets.Add(obj);
+                database._guids.Add(guid);
             }
+
+            database.InitializeLookupDictionaries();
         }
         
         #endif
