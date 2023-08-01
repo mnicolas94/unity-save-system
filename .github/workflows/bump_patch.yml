@@ -6,4 +6,4 @@ on:
     
 jobs:
   bumpVersion:
-    uses: mnicolas94/UnityCICDWorkflows/.github/workflows/bump_patch_package.yml@v1-pre-8
+    uses: mnicolas94/UnityCICDWorkflows/.github/workflows/bump_patch_package.yml@main
