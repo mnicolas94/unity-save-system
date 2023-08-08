@@ -26,8 +26,8 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                 // remove AOT dll to avoid old assemblies to be referenced
                 var pathsToDelete = new List<string>
                 {
-                    Path.Combine(MediaTypeNames.Application.dataPath, $"{DllName}.dll"),
-                    Path.Combine(MediaTypeNames.Application.dataPath, "link.xml"),
+                    Path.Combine(Application.dataPath, $"{DllName}.dll"),
+                    Path.Combine(Application.dataPath, "link.xml"),
                 };
                 foreach (var path in pathsToDelete)
                 {
@@ -44,7 +44,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             if (AOTSupportUtilities.ScanProjectForSerializedTypes(out var types))
             {
                 OdinSerializer.OdinSerializer.Editor.AOTSupportUtilities.GenerateDLL(
-                    MediaTypeNames.Application.dataPath,
+                    Application.dataPath,
                     DllName,
                     types
                 );
