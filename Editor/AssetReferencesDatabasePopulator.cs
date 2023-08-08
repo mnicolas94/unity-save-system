@@ -27,7 +27,14 @@ namespace SaveSystem.Editor
             AssetGuidsDatabase.PopulateDatabase(objectsGuids);
             EditorUtility.SetDirty(AssetGuidsDatabase.Instance);
             AssetDatabase.SaveAssets();
-            EditorWindow.focusedWindow.ShowNotification(new GUIContent("Database populated successfully"));
+            try
+            {
+                EditorWindow.focusedWindow.ShowNotification(new GUIContent("Database populated successfully"));
+            }
+            catch
+            {
+                // ignore
+            }
         }
     }
 }
