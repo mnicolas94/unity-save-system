@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Net.Mime;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -22,10 +24,17 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             else
             {
                 // remove AOT dll to avoid old assemblies to be referenced
-                var dllPath = Path.Combine(Application.dataPath, $"{DllName}.dll");
-                if (File.Exists(dllPath))
+                var pathsToDelete = new List<string>
                 {
-                    File.Delete(dllPath);
+                    Path.Combine(MediaTypeNames.Application.dataPath, $"{DllName}.dll"),
+                    Path.Combine(MediaTypeNames.Application.dataPath, "link.xml"),
+                };
+                foreach (var path in pathsToDelete)
+                {
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
                 }
             }
         }
@@ -35,7 +44,7 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
             if (AOTSupportUtilities.ScanProjectForSerializedTypes(out var types))
             {
                 OdinSerializer.OdinSerializer.Editor.AOTSupportUtilities.GenerateDLL(
-                    Application.dataPath,
+                    MediaTypeNames.Application.dataPath,
                     DllName,
                     types
                 );
