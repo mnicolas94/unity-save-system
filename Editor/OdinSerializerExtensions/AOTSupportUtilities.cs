@@ -55,20 +55,20 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                 //     serializedTypes = null;
                 //     return false;
                 // }
-                //
-                // if (scanResources && !scanner.ScanAllResources(includeResourceDependencies: true, showProgressBar: true, resourcesPaths: resourcesToScan))
-                // {
-                //     Debug.Log("Project scan canceled while scanning resources and their dependencies.");
-                //     serializedTypes = null;
-                //     return false;
-                // }
-                //
-                // if (scanAllAssetBundles && !scanner.ScanAllAssetBundles(showProgressBar: true))
-                // {
-                //     Debug.Log("Project scan canceled while scanning asset bundles and their dependencies.");
-                //     serializedTypes = null;
-                //     return false;
-                // }
+                
+                if (scanResources && !scanner.ScanAllResources(includeResourceDependencies: true, showProgressBar: true, resourcesPaths: resourcesToScan))
+                {
+                    Debug.Log("Project scan canceled while scanning resources and their dependencies.");
+                    serializedTypes = null;
+                    return false;
+                }
+                
+                if (scanAllAssetBundles && !scanner.ScanAllAssetBundles(showProgressBar: true))
+                {
+                    Debug.Log("Project scan canceled while scanning asset bundles and their dependencies.");
+                    serializedTypes = null;
+                    return false;
+                }
                 //
                 // if (scanPreloadedAssets && !scanner.ScanPreloadedAssets(showProgressBar: true))
                 // {
@@ -76,13 +76,13 @@ namespace SaveSystem.Editor.OdinSerializerExtensions
                 //     serializedTypes = null;
                 //     return false;
                 // }
-                //
-                // if (scanAddressables && !scanner.ScanAllAddressables(includeAssetDependencies: true, showProgressBar: true))
-                // {
-                //     Debug.Log("Project scan canceled while scanning addressable assets and their dependencies.");
-                //     serializedTypes = null;
-                //     return false;
-                // }
+                
+                if (scanAddressables && !scanner.ScanAllAddressables(includeAssetDependencies: true, showProgressBar: true))
+                {
+                    Debug.Log("Project scan canceled while scanning addressable assets and their dependencies.");
+                    serializedTypes = null;
+                    return false;
+                }
 
                 serializedTypes = scanner.EndScan();
             }
