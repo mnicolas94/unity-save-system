@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using SaveSystem.Attributes;
-using Utils;
+using UnityEngine;
 
 namespace SaveSystem
 {
@@ -20,7 +20,7 @@ namespace SaveSystem
                 ignoreFields.AddRange(att.Fields);
             }
             
-            var fields = sourceType.GetRuntimeFields();
+            var fields = GetSerializableFields(sourceType);
             foreach (var fieldInfo in fields)
             {
                 var ignore = ignoreFields.Contains(fieldInfo.Name);
@@ -38,6 +38,30 @@ namespace SaveSystem
                 var value = fieldInfo.GetValue(source);
                 fieldInfo.SetValue(destiny, value);
             }
+        }
+        
+        public static List<FieldInfo> GetSerializableFields(Type type)
+        {
+            var serializableFields = new List<FieldInfo>();
+
+            while (type != null)
+            {
+                var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+                var fields = type.GetFields(bindingFlags);
+                foreach (var field in fields)
+                {
+                    // Check if the field is marked as serializable or is public
+                    if (Attribute.IsDefined(field, typeof(SerializeField)) || 
+                        (!Attribute.IsDefined(field, typeof(NonSerializedAttribute)) && field.IsPublic))
+                    {
+                        serializableFields.Add(field);
+                    }
+                }
+
+                type = type.BaseType;
+            }
+
+            return serializableFields;
         }
     }
 }

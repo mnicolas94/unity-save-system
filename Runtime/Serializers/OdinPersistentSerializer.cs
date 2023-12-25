@@ -24,7 +24,7 @@ namespace SaveSystem.Serializers
 
         public void Deserialize(byte[] data, ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
         {
-            var context = new DeserializationContext()
+            var context = new DeserializationContext
             {
                 StringReferenceResolver = new GuidsReferenceResolver(guidsDatabase, obj)
             };
