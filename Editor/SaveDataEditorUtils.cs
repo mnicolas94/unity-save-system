@@ -37,6 +37,7 @@ namespace SaveSystem.Editor
         public static void ResetObjectData()
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            Undo.RecordObjects(selected, "Reset data");
             foreach (var obj in selected)
             {
                 SaveUtils.ResetPersistentObject(obj);
