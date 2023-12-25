@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using SaveSystem.Attributes;
 using UnityEngine;
@@ -43,22 +44,41 @@ namespace SaveSystem
         public static List<FieldInfo> GetSerializableFields(Type type)
         {
             var serializableFields = new List<FieldInfo>();
-
-            while (type != null)
+            var persistDeclaredOnly = type.GetCustomAttribute<PersistDeclaredOnlyAttribute>() != null;
+            
+            if (persistDeclaredOnly)
             {
-                var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-                var fields = type.GetFields(bindingFlags);
-                foreach (var field in fields)
+                serializableFields.AddRange(type.GetRuntimeFields());
+            }
+            else
+            {
+                var onlyFields = new List<string>();
+                while (type != null)
                 {
-                    // Check if the field is marked as serializable or is public
-                    if (Attribute.IsDefined(field, typeof(SerializeField)) || 
-                        (!Attribute.IsDefined(field, typeof(NonSerializedAttribute)) && field.IsPublic))
+                    var att = type.GetCustomAttribute<OnlyPersistAttribute>();
+                    if (att != null)
                     {
-                        serializableFields.Add(field);
+                        onlyFields.AddRange(att.Fields);
                     }
-                }
+                    
+                    var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+                    var fields = type.GetFields(bindingFlags);
+                    foreach (var field in fields)
+                    {
+                        // Check if the field is marked as serializable or is public
+                        if (Attribute.IsDefined(field, typeof(SerializeField)) || 
+                            (!Attribute.IsDefined(field, typeof(NonSerializedAttribute)) && field.IsPublic))
+                        {
+                            var doPersist = onlyFields.Count == 0 || onlyFields.Contains(field.Name);
+                            if (doPersist)
+                            {
+                                serializableFields.Add(field);
+                            }
+                        }
+                    }
 
-                type = type.BaseType;
+                    type = type.BaseType;
+                }
             }
 
             return serializableFields;

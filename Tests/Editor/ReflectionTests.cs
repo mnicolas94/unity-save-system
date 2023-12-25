@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using SaveSystem.Attributes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -35,6 +36,20 @@ namespace SaveSystem.Tests.Editor
         [SerializeField] private float _childField;
     }
     
+    [OnlyPersist("_field1", "_field2")]
+    [Serializable]
+    internal class ChildOnlyFields : Base
+    {
+        [SerializeField] private float _childField;
+    }
+    
+    [PersistDeclaredOnly]
+    [Serializable]
+    internal class ChildDeclared : Base
+    {
+        [SerializeField] private float _only;
+    }
+    
     public class ReflectionTests
     {
         [SetUp]
@@ -59,6 +74,55 @@ namespace SaveSystem.Tests.Editor
                 "_field2",
                 "_serializableFieldObject",
                 "_childField",
+            };
+            
+            Assert.IsTrue(fields.Count == expected.Length);
+            
+            foreach (var field in fields)
+            {
+                Assert.IsTrue(expected.Contains(field.Name));
+            }
+        }
+        
+        [Test]
+        public void GetSerializableFieldsWithPersistOnlyAttributeTest()
+        {
+            // arrange
+            var type = typeof(ChildOnlyFields);
+            
+            // act
+            var fields = ReflectionUtils.GetSerializableFields(type);
+            
+            // assert
+            var expected = new []
+            {
+                "_field1",
+                "_field2",
+            };
+            
+            Debug.Log(string.Join("\n", fields.ConvertAll(f => f.Name)));
+            
+            Assert.IsTrue(fields.Count == expected.Length);
+            
+            foreach (var field in fields)
+            {
+                Assert.IsTrue(expected.Contains(field.Name));
+            }
+        }
+        
+        [Test]
+        public void GetSerializableFieldsWithPersistDeclaredOnlyAttributeTest()
+        {
+            // arrange
+            var type = typeof(ChildDeclared);
+            
+            // act
+            var fields = ReflectionUtils.GetSerializableFields(type);
+            
+            // assert
+            var expected = new []
+            {
+                "_only",
             };
             
             Assert.IsTrue(fields.Count == expected.Length);

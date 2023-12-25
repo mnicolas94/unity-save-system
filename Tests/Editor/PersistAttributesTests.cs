@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 namespace SaveSystem.Tests.Editor
 {
-    public class DoNotPersistTests
+    public class PersistAttributesTests
     {
         private static PersistentTest _data;
         private const string Path = "Assets/SaveSystem/Tests/Editor/PersistentTest.asset";
@@ -34,7 +34,7 @@ namespace SaveSystem.Tests.Editor
         }
 
         [UnityTest]
-        public IEnumerator WhenSavingAndLoadingAnObjectWithADoNotPersistField_TheDoesNotPersist()
+        public IEnumerator WhenSavingAndLoadingAnObjectWithADoNotPersistField_ItDoesNotPersist()
         {
             // arrange
             _data.S = "45";
@@ -52,5 +52,8 @@ namespace SaveSystem.Tests.Editor
             Assert.AreEqual(expectedS, _data.S);
             Assert.AreEqual(expectedF, _data.F);
         }
+        
+        // TODO tests for OnlyPersistAttribute
+        // TODO tests for PersistDeclaredOnlyAttribute
     }
 }
