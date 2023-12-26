@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
+using System.Collections.Generic;
 using OdinSerializer.OdinSerializer;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -11,7 +10,10 @@ namespace SaveSystem.Serializers
     public class OdinPersistentSerializer : ISerializer
     {
         [SerializeField] private DataFormat _format;
-        
+        [SerializeField] private List<string> _aotAdditionalTypes;
+
+        public List<string> AOTAdditionalTypes => _aotAdditionalTypes;
+
         public byte[] Serialize(ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
         {
             var context = new SerializationContext
