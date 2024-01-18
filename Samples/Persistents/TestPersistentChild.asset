@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d49931affb4205b3e619473fc97dd3, type: 3}
   m_Name: TestPersistentChild
   m_EditorClassIdentifier: 
-  _baseInt: 0
-  _baseFloat: 0
-  _string: 
+  _baseInt: 1
+  _baseFloat: 2
+  _string: 3
