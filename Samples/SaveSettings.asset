@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: SaveSettings
   m_EditorClassIdentifier: 
   _serializer:
-    rid: 0
+    rid: 8263538418733285379
   _encryptData: 0
   _searchDatabaseAssetsInPaths:
-  - Assets/Samples
-  - Assets/SaveSystem/Tests/Editor
+  - Assets/SaveSystem/Samples/Persistents
+  - Assets/SaveSystem/Tests/Editor/Data
   _ignoreDatabaseAssetsInPaths: []
   _populateDatabaseBeforeEnterPlayMode: 1
   _broadcaster:
@@ -31,7 +31,5 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 0
-      type: {class: OdinPersistentSerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
-      data:
-        _format: 0
+    - rid: 8263538418733285379
+      type: {class: UnitySerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
