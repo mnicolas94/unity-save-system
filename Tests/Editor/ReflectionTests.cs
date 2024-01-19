@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using SaveSystem.Attributes;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace SaveSystem.Tests.Editor
 {
@@ -99,8 +95,6 @@ namespace SaveSystem.Tests.Editor
                 "_field1",
                 "_field2",
             };
-            
-            Debug.Log(string.Join("\n", fields.ConvertAll(f => f.Name)));
             
             Assert.IsTrue(fields.Count == expected.Length);
             

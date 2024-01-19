@@ -9,7 +9,7 @@ namespace SaveSystem.Tests.Editor
     public class PersistAttributesTests
     {
         private static PersistentTest _data;
-        private const string Path = "Assets/SaveSystem/Tests/Editor/PersistentTest.asset";
+        private const string Path = "Assets/SaveSystem/Tests/Editor/Data/PersistentTest.asset";
 
         [SetUp]
         public void SetUp()
