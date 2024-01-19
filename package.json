@@ -7,7 +7,8 @@
   "unityRelease": "",
   "dependencies": {
     "com.facticus.utils": "0.10.0",
-    "com.unity.addressables": "1.19.18"
+    "com.unity.addressables": "1.19.18",
+    "com.unity.serialization": "3.1.1"
   },
   "keywords": [],
   "author": {
