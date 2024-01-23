@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SaveSystem.GuidsResolve;
 using SaveSystem.Serializers;
 using UnityEngine;
 using Utils;
@@ -10,31 +11,30 @@ namespace SaveSystem
     {
         [Header("Serialization")]
         [SerializeReference, SubclassSelector] private ISerializer _serializer;
-        [SerializeField] private bool _encryptData;
+        public ISerializer Serializer => _serializer;
         
+        [SerializeField] private bool _encryptData;
+        public bool EncryptData => _encryptData;
+
         [Header("Asset Guid's database")]
+        [SerializeReference, SubclassSelector] private IGuidResolver _guidsResolver = new GuidsDatabase();
+        public IGuidResolver GuidsResolver => _guidsResolver;
+
         [SerializeField] private List<string> _searchDatabaseAssetsInPaths;
+        public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
+        
         [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
+        public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
+        
         [SerializeField] private bool _populateDatabaseBeforeEnterPlayMode;
+        public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
 
         [Header("Listeners")]
         [SerializeField] private SaveLoadBroadcaster _broadcaster = new SaveLoadBroadcaster();
+        public SaveLoadBroadcaster Broadcaster => _broadcaster;
         
         [Header("Debug")]
         [SerializeField] private bool _debugLogging;
-        
-        public ISerializer Serializer => _serializer;
-
-        public bool EncryptData => _encryptData;
-
-        public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
-
-        public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
-
-        public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
-
-        public SaveLoadBroadcaster Broadcaster => _broadcaster;
-
         public bool DebugLogging => _debugLogging;
     }
 }

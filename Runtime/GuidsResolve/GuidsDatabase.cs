@@ -1,39 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using UnityEngine;
-using Utils;
-using Utils.Serializables;
 using Object = UnityEngine.Object;
 
-namespace SaveSystem
+namespace SaveSystem.GuidsResolve
 {
     [Serializable]
-    public class AssetToGuidDictionary : SerializableDictionary<Object, string>{}
-    [Serializable]
-    public class GuidToAssetDictionary : SerializableDictionary<string, Object>{}
-    
-    [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "Facticus/Save system/AssetGuidsDatabase", order = 0)]
-    public class AssetGuidsDatabase : ScriptableObjectSingleton<AssetGuidsDatabase>
+    public class GuidsDatabase : IGuidResolver, ISerializationCallbackReceiver
     {
-        [SerializeField] private List<Object> _assets = new List<Object>();
-        [SerializeField] private List<string> _guids = new List<string>();
-        private Dictionary<Object, string> _assetToGuid;
-        private Dictionary<string, Object> _guidToAsset;
+        [SerializeField] private List<Object> _assets = new ();
+        [SerializeField] private List<string> _guids = new ();
+        private Dictionary<Object, string> _assetToGuid = new ();
+        private Dictionary<string, Object> _guidToAsset = new ();
 
         public ReadOnlyCollection<Object> Assets => _assets.AsReadOnly();
         public ReadOnlyCollection<string> Guids => _guids.AsReadOnly();
 
-        protected override void OnEnableCallback()
-        {
-            InitializeLookupDictionaries();
-        }
-
         private void InitializeLookupDictionaries()
         {
-            _assetToGuid = new AssetToGuidDictionary();
-            _guidToAsset = new GuidToAssetDictionary();
+            _assetToGuid.Clear();
+            _guidToAsset.Clear();
             for (int i = 0; i < _assets.Count; i++)
             {
                 var asset = _assets[i];
@@ -76,46 +63,51 @@ namespace SaveSystem
             throw new ArgumentException($"Guid not present in database: {guid}");
         }
         
-        public string TryGetGuid(Object obj, out bool exists)
+        public bool TryGetGuid(Object obj, out string guid)
         {
             if (_assetToGuid.ContainsKey(obj))
             {
-                exists = true;
-                return _assetToGuid[obj];
+                guid = _assetToGuid[obj];
+                return true;
             }
 
-            exists = false;
-            return null;
+            guid = null;
+            return false;
         }
         
-        public Object TryGetObject(string guid, out bool exists)
+        public bool TryGetObject(string guid, out Object obj)
         {
             if (_guidToAsset.ContainsKey(guid))
             {
-                exists = true;
-                return _guidToAsset[guid];
+                obj = _guidToAsset[guid];
+                return true;
             }
 
-            exists = false;
-            return null;
+            obj = null;
+            return false;
         }
         
-        #if UNITY_EDITOR
-
-        public static void PopulateDatabase(List<(Object, string)> references)
+        public void PopulateDatabase(List<(Object, string)> references)
         {
-            var database = Instance;
-            database._assets.Clear();
-            database._guids.Clear();
+            _assets.Clear();
+            _guids.Clear();
             foreach (var (obj, guid) in references)
             {
-                database._assets.Add(obj);
-                database._guids.Add(guid);
+                _assets.Add(obj);
+                _guids.Add(guid);
             }
 
-            database.InitializeLookupDictionaries();
+            InitializeLookupDictionaries();
         }
-        
-        #endif
+
+        public void OnBeforeSerialize()
+        {
+            
+        }
+
+        public void OnAfterDeserialize()
+        {
+            InitializeLookupDictionaries();
+        }
     }
 }

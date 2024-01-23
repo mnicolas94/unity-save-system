@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SaveSystem.GuidsResolve;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -24,8 +25,9 @@ namespace SaveSystem.Editor
         public static void PopulateDatabase()
         {
             var objectsGuids = SaveDataEditorUtils.GetDataObjectsAndGuids();
-            AssetGuidsDatabase.PopulateDatabase(objectsGuids);
-            EditorUtility.SetDirty(AssetGuidsDatabase.Instance);
+            var saveSystemSettings = SaveSystemSettings.Instance;
+            saveSystemSettings.GuidsResolver.PopulateDatabase(objectsGuids);
+            EditorUtility.SetDirty(saveSystemSettings);
             AssetDatabase.SaveAssets();
             try
             {

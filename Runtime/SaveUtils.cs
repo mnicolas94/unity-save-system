@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using SaveSystem.GuidsResolve;
 using UnityEngine;
 
 namespace SaveSystem
@@ -72,7 +73,7 @@ namespace SaveSystem
 
         public static string GetPersistentFileName(ScriptableObject obj)
         {
-            var guid = AssetGuidsDatabase.Instance.GetGuid(obj);
+            var guid = SaveSystemSettings.Instance.GuidsResolver.GetGuid(obj);
             return guid;
         }
 
@@ -93,11 +94,11 @@ namespace SaveSystem
         {
             await Task.Yield();  // this is to allow this function to run asynchronously
             
-            var database = AssetGuidsDatabase.Instance;
+            var guidResolver = SaveSystemSettings.Instance.GuidsResolver;
             
             if (obj is IPersistentCallbackReceiver receiverBefore)
             {
-                receiverBefore.OnBeforeSave(database);
+                receiverBefore.OnBeforeSave(guidResolver);
             }
             
             var filePath = GetPersistentPath(obj);
@@ -108,11 +109,11 @@ namespace SaveSystem
             byte[] data;
             if (obj is IPersistentCustomSerializable customSerializable)
             {
-                data = customSerializable.WriteData(database);
+                data = customSerializable.WriteData(guidResolver);
             }
             else
             {
-                data = serializer.Serialize(obj, database);
+                data = serializer.Serialize(obj, guidResolver);
             }
             
             var version = Application.version;
@@ -186,15 +187,15 @@ namespace SaveSystem
 
             // deserialize data
             var serializer = SaveSystemSettings.Instance.Serializer;
-            var database = AssetGuidsDatabase.Instance;
+            var guidResolver = SaveSystemSettings.Instance.GuidsResolver;
             
             if (obj is IPersistentCustomSerializable customSerializable)
             {
-                customSerializable.ReadData(decryptedData, database);
+                customSerializable.ReadData(decryptedData, guidResolver);
             }
             else
             {
-                serializer.Deserialize(decryptedData, obj, database);
+                serializer.Deserialize(decryptedData, obj, guidResolver);
             }
             
             if (report.DifferentVersion)
@@ -204,7 +205,7 @@ namespace SaveSystem
         
             if (obj is IPersistentCallbackReceiver receiverAfter)
             {
-                receiverAfter.OnAfterLoad(database);
+                receiverAfter.OnAfterLoad(guidResolver);
             }
 
             // notify object was loaded

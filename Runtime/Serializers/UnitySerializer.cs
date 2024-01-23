@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SaveSystem.GuidsResolve;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Collections.LowLevel.Unsafe.NotBurstCompatible;
@@ -12,16 +13,16 @@ namespace SaveSystem.Serializers
     [Serializable]
     public class UnitySerializer : ISerializer
     {
-        public byte[] Serialize(ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
+        public byte[] Serialize(ScriptableObject obj, IGuidResolver guidsResolver)
         {
-            return Serialize<ScriptableObject>(obj, guidsDatabase);
+            return Serialize<ScriptableObject>(obj, guidsResolver);
         }
         
-        public unsafe byte[] Serialize<T>(T obj, AssetGuidsDatabase guidsDatabase) where T : Object
+        public unsafe byte[] Serialize<T>(T obj, IGuidResolver guidsResolver) where T : Object
         {
             using var stream = new UnsafeAppendBuffer(128, 8, Allocator.Temp);
             var unsafeAppendBuffer = stream;
-            var parameters = GetBinarySerializationParameters(guidsDatabase);
+            var parameters = GetBinarySerializationParameters(guidsResolver);
 
             BinarySerialization.ToBinary(&unsafeAppendBuffer, obj, parameters);
             var data = unsafeAppendBuffer.ToBytesNBC();
@@ -29,29 +30,29 @@ namespace SaveSystem.Serializers
             return data;
         }
 
-        public void Deserialize(byte[] data, ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
+        public void Deserialize(byte[] data, ScriptableObject obj, IGuidResolver guidsResolver)
         {
-            Deserialize<ScriptableObject>(data, obj, guidsDatabase);
+            Deserialize<ScriptableObject>(data, obj, guidsResolver);
         }
         
-        public unsafe void Deserialize<T>(byte[] data, T obj, AssetGuidsDatabase guidsDatabase) where T : Object
+        public unsafe void Deserialize<T>(byte[] data, T obj, IGuidResolver guidsResolver) where T : Object
         {
             using var nativeArray = new NativeArray<byte>(data, Allocator.Temp);
 
             var reader = new UnsafeAppendBuffer.Reader(nativeArray.GetUnsafePtr(), nativeArray.Length);
 
-            var parameters = GetBinarySerializationParameters(guidsDatabase);
+            var parameters = GetBinarySerializationParameters(guidsResolver);
             var deserialized = BinarySerialization.FromBinary<T>(&reader, parameters);
             
             ReflectionUtils.CopyTo(deserialized, obj);
         }
         
         private static BinarySerializationParameters GetBinarySerializationParameters(
-            AssetGuidsDatabase guidsDatabase)
+            IGuidResolver guidsResolver)
         {
             var parameters = new BinarySerializationParameters
             {
-                UserDefinedAdapters = new List<IBinaryAdapter> { new GuidBinaryAdapter(guidsDatabase) },
+                UserDefinedAdapters = new List<IBinaryAdapter> { new GuidBinaryAdapter(guidsResolver) },
                 DisableRootAdapters = true
             };
             return parameters;
@@ -60,19 +61,19 @@ namespace SaveSystem.Serializers
 
     public class GuidBinaryAdapter : IContravariantBinaryAdapter<Object>
     {
-        private AssetGuidsDatabase _database;
+        private IGuidResolver _resolver;
 
-        public GuidBinaryAdapter(AssetGuidsDatabase database)
+        public GuidBinaryAdapter(IGuidResolver resolver)
         {
-            _database = database;
+            _resolver = resolver;
         }
 
         public void Serialize(IBinarySerializationContext context, Object value)
         {
             var guid = "";
-            if (_database != null)
+            if (_resolver != null && value != null)
             {
-                guid = _database.TryGetGuid(value, out bool exists);
+                _resolver.TryGetGuid(value, out guid);
             }
             
             context.SerializeValue(guid);
@@ -80,10 +81,10 @@ namespace SaveSystem.Serializers
 
         public object Deserialize(IBinaryDeserializationContext context)
         {
-            if (_database != null)
+            var guid = context.DeserializeValue<string>();
+            if (_resolver != null && string.IsNullOrEmpty(guid))
             {
-                var guid = context.DeserializeValue<string>();
-                var value = _database.TryGetObject(guid, out var exists);
+                _resolver.TryGetObject(guid, out var value);
                 
                 return value;
             }

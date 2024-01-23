@@ -1,5 +1,6 @@
 ﻿using System;
 using SaveSystem;
+using SaveSystem.GuidsResolve;
 using UnityEngine;
 
 namespace Samples
@@ -26,7 +27,7 @@ namespace Samples
             Debug.Log("After Load call...");
         }
         
-        public void OnBeforeSave(AssetGuidsDatabase guidsDatabase)
+        public void OnBeforeSave(IGuidResolver guidsDatabase)
         {
             Debug.Log("Saving...");
             WaitSecondsSynchronous(2);
@@ -43,7 +44,7 @@ namespace Samples
             WaitSecondsSynchronous(2);
         }
 
-        public void OnAfterLoad(AssetGuidsDatabase guidsDatabase)
+        public void OnAfterLoad(IGuidResolver guidsDatabase)
         {
             Debug.Log("Loaded");
         }

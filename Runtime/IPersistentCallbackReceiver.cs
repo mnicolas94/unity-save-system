@@ -1,10 +1,12 @@
-﻿namespace SaveSystem
+﻿using SaveSystem.GuidsResolve;
+
+namespace SaveSystem
 {
     public interface IPersistentCallbackReceiver
     {
-        void OnBeforeSave(AssetGuidsDatabase guidsDatabase);
+        void OnBeforeSave(IGuidResolver guidsDatabase);
         void OnAfterSave();
         void OnBeforeLoad();
-        void OnAfterLoad(AssetGuidsDatabase guidsDatabase);
+        void OnAfterLoad(IGuidResolver guidsDatabase);
     }
 }

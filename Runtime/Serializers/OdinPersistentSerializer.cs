@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OdinSerializer.OdinSerializer;
+using SaveSystem.GuidsResolve;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -14,17 +15,17 @@ namespace SaveSystem.Serializers
 
         public List<string> AOTAdditionalTypes => _aotAdditionalTypes;
 
-        public byte[] Serialize(ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
+        public byte[] Serialize(ScriptableObject obj, IGuidResolver guidsResolver)
         {
             var context = new SerializationContext
             {
-                StringReferenceResolver = new GuidsReferenceResolver(guidsDatabase, obj)
+                StringReferenceResolver = new GuidsReferenceResolver(guidsResolver, obj)
             };
             byte[] bytes = SerializationUtility.SerializeValue(obj, _format, context);
             return bytes;
         }
 
-        public void Deserialize(byte[] data, ScriptableObject obj, AssetGuidsDatabase guidsDatabase)
+        public void Deserialize(byte[] data, ScriptableObject obj, IGuidResolver guidsDatabase)
         {
             var context = new DeserializationContext
             {
@@ -37,10 +38,10 @@ namespace SaveSystem.Serializers
 
     public class GuidsReferenceResolver : IExternalStringReferenceResolver
     {
-        private AssetGuidsDatabase _database;
+        private IGuidResolver _database;
         private Object _parent;
         
-        public GuidsReferenceResolver(AssetGuidsDatabase database, Object parent)
+        public GuidsReferenceResolver(IGuidResolver database, Object parent)
         {
             _database = database;
             _parent = parent;
@@ -53,7 +54,8 @@ namespace SaveSystem.Serializers
             value = null;
             if (id == "not_in_database") return true;
 
-            value = _database.TryGetObject(id, out bool exists);
+            var exists = _database.TryGetObject(id, out var obj);
+            value = obj;
             return exists;
         }
 
@@ -64,8 +66,7 @@ namespace SaveSystem.Serializers
             bool isParent = ReferenceEquals(value, _parent);
             if (value is Object obj && (!isParent || !parentIsScriptableObject))
             {
-                id = _database.TryGetGuid(obj, out bool exists);
-                if (!exists)
+                if (!_database.TryGetGuid(obj, out id))
                     id = "not_in_database";
 
                 return true;

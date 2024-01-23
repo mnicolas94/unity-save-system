@@ -1,8 +1,10 @@
-﻿namespace SaveSystem
+﻿using SaveSystem.GuidsResolve;
+
+namespace SaveSystem
 {
     public interface IPersistentCustomSerializable
     {
-        byte[] WriteData(AssetGuidsDatabase database);
-        void ReadData(byte[] data, AssetGuidsDatabase database);
+        byte[] WriteData(IGuidResolver database);
+        void ReadData(byte[] data, IGuidResolver database);
     }
 }
