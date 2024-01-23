@@ -82,7 +82,7 @@ namespace SaveSystem.Serializers
         public object Deserialize(IBinaryDeserializationContext context)
         {
             var guid = context.DeserializeValue<string>();
-            if (_resolver != null && string.IsNullOrEmpty(guid))
+            if (_resolver != null && !string.IsNullOrEmpty(guid))
             {
                 _resolver.TryGetObject(guid, out var value);
                 
