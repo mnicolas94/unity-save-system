@@ -7,6 +7,7 @@
   "unityRelease": "",
   "dependencies": {
     "com.facticus.utils": "0.10.0",
+    "com.mackysoft.serializereference-extensions": "1.2.1",
     "com.unity.addressables": "1.19.18",
     "com.unity.serialization": "3.1.1"
   },
