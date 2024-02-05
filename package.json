@@ -11,7 +11,14 @@
     "com.unity.addressables": "1.19.18",
     "com.unity.serialization": "3.1.1"
   },
-  "keywords": [],
+  "samples": [
+    {
+      "displayName": "Odin serializer",
+      "description": "Contains a serializer implementation with Odin Serializer",
+      "path": "Samples~/OdinSerializer"
+    }
+  ],
+  "keywords": ["save", "load", "serialization", "persistence"],
   "author": {
     "name": "Facticus",
     "email": "miguelcok27@gmail.com",

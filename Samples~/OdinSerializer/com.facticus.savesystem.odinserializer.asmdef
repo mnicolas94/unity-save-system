@@ -1,0 +1,17 @@
+{
+    "name": "com.facticus.savesystem.odinserializer",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5f5853784b75c8e428d4bb8bfff666dc",
+        "GUID:f38f976ef50e017157fae599c8b34a74"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

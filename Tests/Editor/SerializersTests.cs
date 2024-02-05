@@ -12,16 +12,13 @@ namespace SaveSystem.Tests.Editor
     public class SerializersTests
     {
         private const string UnitySerializerKey = "UnitySerializer";
-        private const string OdinSerializerKey = "OdinSerializer";
 
         private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
         {
             { UnitySerializerKey, new UnitySerializer() },
-            { OdinSerializerKey, new OdinPersistentSerializer() },
         };
         
         [TestCase(UnitySerializerKey)]
-        [TestCase(OdinSerializerKey)]
         public void WhenSerializeAnObject_ItsDeserializationHasTheProperTheValues_Test(string serializerKey)
         {
             // arrange

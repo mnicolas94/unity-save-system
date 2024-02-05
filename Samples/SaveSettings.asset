@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SaveSettings
   m_EditorClassIdentifier: 
   _serializer:
-    rid: 8263538418733285379
+    rid: 2350179849866838017
   _encryptData: 0
   _guidsResolver:
     rid: 8263538504144257024
@@ -33,7 +33,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8263538418733285379
+    - rid: 2350179849866838017
       type: {class: UnitySerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
     - rid: 8263538504144257024
       type: {class: GuidsDatabase, ns: SaveSystem.GuidsResolve, asm: com.facticus.savesystem}

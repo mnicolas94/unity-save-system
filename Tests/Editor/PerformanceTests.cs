@@ -12,16 +12,13 @@ namespace SaveSystem.Tests.Editor
     public class PerformanceTests
     {
         private const string UnitySerializerKey = "UnitySerializer";
-        private const string OdinSerializerKey = "OdinSerializer";
 
         private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
         {
             { UnitySerializerKey, new UnitySerializer() },
-            { OdinSerializerKey, new OdinPersistentSerializer() },
         };
         
         [Performance]
-        [TestCase(OdinSerializerKey)]
         [TestCase(UnitySerializerKey)]
         public void Serialization_PerformanceTest(string serializerKey)
         {
@@ -34,7 +31,6 @@ namespace SaveSystem.Tests.Editor
         }
         
         [Performance]
-        [TestCase(OdinSerializerKey)]
         [TestCase(UnitySerializerKey)]
         public void SerializationLargeObject_PerformanceTest(string serializerKey)
         {

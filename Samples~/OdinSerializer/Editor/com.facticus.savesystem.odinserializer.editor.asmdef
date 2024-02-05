@@ -1,0 +1,23 @@
+{
+    "name": "com.facticus.savesystem.odinserializer.editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5f5853784b75c8e428d4bb8bfff666dc",
+        "GUID:a9014c7ef6e1e274fbdea712aa1fed81",
+        "GUID:d9d6cae49c8ca2f4fb7154d268ec824b",
+        "GUID:c35c6d9084ba1a541868fbd8c50a585a",
+        "GUID:87f0d0b9a8d159a4c94e89b339e4604a",
+        "GUID:f38f976ef50e017157fae599c8b34a74"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
