@@ -17,7 +17,7 @@ namespace SaveSystem.Tests.Editor
         private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
         {
             { UnitySerializerKey, new UnitySerializer() },
-            { OdinSerializerKey, new OdinPersistentSerializer() },
+            { OdinSerializerKey, new UnitySerializer() },  // removed odin
         };
         
         [Performance]

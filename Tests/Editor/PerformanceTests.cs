@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SaveSystem.Serializers;
@@ -17,7 +16,7 @@ namespace SaveSystem.Tests.Editor
         private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
         {
             { UnitySerializerKey, new UnitySerializer() },
-            { OdinSerializerKey, new OdinPersistentSerializer() },
+            { OdinSerializerKey, new UnitySerializer() },  // removed odin
         };
         
         [Performance]
