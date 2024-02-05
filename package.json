@@ -1,6 +1,6 @@
 {
   "name": "com.facticus.savesystem",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "displayName": "Save System",
   "description": "An easy to use save system for Unity",
   "unity": "2021.1",
@@ -18,7 +18,12 @@
       "path": "Samples~/OdinSerializer"
     }
   ],
-  "keywords": ["save", "load", "serialization", "persistence"],
+  "keywords": [
+    "save",
+    "load",
+    "serialization",
+    "persistence"
+  ],
   "author": {
     "name": "Facticus",
     "email": "miguelcok27@gmail.com",
