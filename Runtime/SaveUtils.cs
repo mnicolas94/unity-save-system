@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace SaveSystem
         public struct LoadReport
         {
             public bool Success;
+            public string FailureReason;
             public string FilePath;
             public bool FileExisted;
             public string Version;
@@ -47,6 +49,7 @@ namespace SaveSystem
             {
                 return $"LoadReport\n" +
                        $"\tSuccess: {Success}\n" +
+                       $"\tFailureReason: {FailureReason}\n" +
                        $"\tFilePath: {FilePath}\n" +
                        $"\tVersion: {Version}\n" +
                        $"\tDeviceId: {DeviceId}\n" +
@@ -63,11 +66,11 @@ namespace SaveSystem
         
         public static string GetPersistentPath(ScriptableObject obj)
         {
-            #if UNITY_EDITOR
-                var filePath = Path.Combine(Application.persistentDataPath, $"editor-{GetPersistentFileName(obj)}.{EXT}");
-            #else
+#if UNITY_EDITOR
+            var filePath = Path.Combine(Application.persistentDataPath, $"editor-{GetPersistentFileName(obj)}.{EXT}");
+#else
                 var filePath = Path.Combine(Application.persistentDataPath, $"{GetPersistentFileName(obj)}.{EXT}");
-            #endif
+#endif
             return filePath;
         }
 
@@ -142,74 +145,84 @@ namespace SaveSystem
         public static async Task<LoadReport> LoadObject(ScriptableObject obj)
         {
             await Task.Yield();  // this is to allow this function to run asynchronously
-            
-            if (obj is IPersistentCallbackReceiver receiverBefore)
-            {
-                receiverBefore.OnBeforeLoad();
-            }
-            
             var report = new LoadReport();
-            var filePath = GetPersistentPath(obj);
-            report.FilePath = filePath;
-            DebugLog($"- SaveUtils.LoadObject: loading from {filePath}");
 
-            if(!File.Exists(filePath))
+            try
+            {
+                if (obj is IPersistentCallbackReceiver receiverBefore)
+                {
+                    receiverBefore.OnBeforeLoad();
+                }
+            
+                var filePath = GetPersistentPath(obj);
+                report.FilePath = filePath;
+                DebugLog($"- SaveUtils.LoadObject: loading from {filePath}");
+
+                if(!File.Exists(filePath))
+                {
+                    report.Success = false;
+                    report.FailureReason = "File not found";
+                    report.FileExisted = false;
+                    return report;
+                }
+
+                // read file and fill report
+                var file = File.OpenRead(filePath);
+                using var reader = new BinaryReader(file);
+                var version = reader.ReadString();
+                var deviceId = reader.ReadString();
+                int checksumLength = reader.ReadInt32();
+                var checkSum = reader.ReadBytes(checksumLength);
+                int dataLength = reader.ReadInt32();
+                var data = reader.ReadBytes(dataLength);
+
+                byte[] decryptedData;
+                if (SaveSystemSettings.Instance.EncryptData)
+                    DesEncryption.TryDecrypt(data, Pass, out decryptedData);
+                else
+                    decryptedData = data;
+
+                report.Success = true;
+                report.FileExisted = true;
+                report.Version = version;
+                report.DeviceId = deviceId;
+                report.Checksum = checkSum;
+                report.Data = decryptedData;
+                report.ChecksumStr = Md5HashToString(checkSum);
+                report.DataStr = Encoding.UTF8.GetString(decryptedData);
+
+                // deserialize data
+                var serializer = SaveSystemSettings.Instance.Serializer;
+                var guidResolver = SaveSystemSettings.Instance.GuidsResolver;
+            
+                if (obj is IPersistentCustomSerializable customSerializable)
+                {
+                    customSerializable.ReadData(decryptedData, guidResolver);
+                }
+                else
+                {
+                    serializer.Deserialize(decryptedData, obj, guidResolver);
+                }
+            
+                if (report.DifferentVersion)
+                {
+                    // obj.ReadPreviousVersion(version, decryptedData);
+                }
+        
+                if (obj is IPersistentCallbackReceiver receiverAfter)
+                {
+                    receiverAfter.OnAfterLoad(guidResolver);
+                }
+
+                // notify object was loaded
+                SaveLoadBroadcaster.Instance.NotifyLoad(obj);
+            }
+            catch (Exception e)
             {
                 report.Success = false;
-                report.FileExisted = false;
-                return report;
+                report.FailureReason = e.Message;
+                DebugLogError($"Error during load: {e.Message}");
             }
-
-            // read file and fill report
-            var file = File.OpenRead(filePath);
-            using var reader = new BinaryReader(file);
-            var version = reader.ReadString();
-            var deviceId = reader.ReadString();
-            int checksumLength = reader.ReadInt32();
-            var checkSum = reader.ReadBytes(checksumLength);
-            int dataLength = reader.ReadInt32();
-            var data = reader.ReadBytes(dataLength);
-
-            byte[] decryptedData;
-            if (SaveSystemSettings.Instance.EncryptData)
-                DesEncryption.TryDecrypt(data, Pass, out decryptedData);
-            else
-                decryptedData = data;
-
-            report.Success = true;
-            report.FileExisted = true;
-            report.Version = version;
-            report.DeviceId = deviceId;
-            report.Checksum = checkSum;
-            report.Data = decryptedData;
-            report.ChecksumStr = Md5HashToString(checkSum);
-            report.DataStr = Encoding.UTF8.GetString(decryptedData);
-
-            // deserialize data
-            var serializer = SaveSystemSettings.Instance.Serializer;
-            var guidResolver = SaveSystemSettings.Instance.GuidsResolver;
-            
-            if (obj is IPersistentCustomSerializable customSerializable)
-            {
-                customSerializable.ReadData(decryptedData, guidResolver);
-            }
-            else
-            {
-                serializer.Deserialize(decryptedData, obj, guidResolver);
-            }
-            
-            if (report.DifferentVersion)
-            {
-//                    obj.ReadPreviousVersion(version, decryptedData);
-            }
-        
-            if (obj is IPersistentCallbackReceiver receiverAfter)
-            {
-                receiverAfter.OnAfterLoad(guidResolver);
-            }
-
-            // notify object was loaded
-            SaveLoadBroadcaster.Instance.NotifyLoad(obj);
             
             return report;
         }
@@ -244,6 +257,12 @@ namespace SaveSystem
             {
                 Debug.Log(message);
             }
+        }
+        
+        private static void DebugLogError(string message)
+        {
+            // always log errors
+            Debug.LogError(message);
         }
     }
 }
