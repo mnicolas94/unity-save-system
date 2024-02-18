@@ -1,29 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SaveSystem.Serializers;
+using SaveSystem.Tests.Editor;
 using Unity.PerformanceTesting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace SaveSystem.Tests.Editor
+namespace SaveSystem.Tests.Runtime
 {
     public class PerformanceTests
     {
-        private const string UnitySerializerKey = "UnitySerializer";
-
-        private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
-        {
-            { UnitySerializerKey, new UnitySerializer() },
-        };
-        
         [Performance]
-        [TestCase(UnitySerializerKey)]
+        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
+        [TestCase(TestsUtils.UnitySerializerJsonKey)]
         public void Serialization_PerformanceTest(string serializerKey)
         {
             // arrange
-            var serializer = _serializers[serializerKey];
+            var serializer = TestsUtils.Serializers[serializerKey];
             var obj = ScriptableObject.CreateInstance<SmallPersistentObject>();
             obj.Init();
 
@@ -31,11 +25,12 @@ namespace SaveSystem.Tests.Editor
         }
         
         [Performance]
-        [TestCase(UnitySerializerKey)]
+        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
+        [TestCase(TestsUtils.UnitySerializerJsonKey)]
         public void SerializationLargeObject_PerformanceTest(string serializerKey)
         {
             // arrange
-            var serializer = _serializers[serializerKey];
+            var serializer = TestsUtils.Serializers[serializerKey];
             var obj = ScriptableObject.CreateInstance<LargePersistentObject>();
             obj.Init();
 

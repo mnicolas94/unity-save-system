@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "com.facticus.savesystem",
+        "com.facticus.savesystem.Editor.Tests",
         "Unity.PerformanceTesting",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"

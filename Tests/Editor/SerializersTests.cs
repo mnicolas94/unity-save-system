@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SaveSystem.GuidsResolve;
-using SaveSystem.Serializers;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -11,21 +10,12 @@ namespace SaveSystem.Tests.Editor
 {
     public class SerializersTests
     {
-        private const string UnitySerializerBinaryKey = "UnitySerializerBinary";
-        private const string UnitySerializerJsonKey = "UnitySerializerJson";
-
-        private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
-        {
-            { UnitySerializerBinaryKey, new UnitySerializer(SerializationMode.Binary) },
-            { UnitySerializerJsonKey, new UnitySerializer(SerializationMode.Json) },
-        };
-        
-        [TestCase(UnitySerializerBinaryKey)]
-        [TestCase(UnitySerializerJsonKey)]
+        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
+        [TestCase(TestsUtils.UnitySerializerJsonKey)]
         public void WhenSerializeAnObject_ItsDeserializationHasTheProperValues_Test(string serializerKey)
         {
             // arrange
-            var serializer = _serializers[serializerKey];
+            var serializer = TestsUtils.Serializers[serializerKey];
             var expected = ScriptableObject.CreateInstance<PersistentObject>();
             expected.I = 42;
             expected.S = "Hello serializer";
