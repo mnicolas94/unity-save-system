@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Collections.LowLevel.Unsafe.NotBurstCompatible;
 using Unity.Serialization.Binary;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SaveSystem.Serializers
@@ -38,10 +39,38 @@ namespace SaveSystem.Serializers
         {
             var parameters = new BinarySerializationParameters
             {
-                UserDefinedAdapters = new List<IBinaryAdapter> { new GuidBinaryAdapter(guidsResolver) },
+                UserDefinedAdapters = new List<IBinaryAdapter>
+                {
+                    new SerializationCallbacksTriggerBinaryAdapter(),
+                    new GuidBinaryAdapter(guidsResolver)
+                },
                 DisableRootAdapters = true
             };
             return parameters;
+        }
+    }
+
+    public class SerializationCallbacksTriggerBinaryAdapter : IContravariantBinaryAdapter<object>
+    {
+        public void Serialize(IBinarySerializationContext context, object value)
+        {
+            if (value is ISerializationCallbackReceiver receiver)
+            {
+                receiver.OnBeforeSerialize();
+            }
+
+            context.ContinueVisitation();
+        }
+
+        public object Deserialize(IBinaryDeserializationContext context)
+        {
+            var result = context.ContinueVisitation();
+            if (result is ISerializationCallbackReceiver receiver)
+            {
+                receiver.OnAfterDeserialize();
+            }
+
+            return result;
         }
     }
 

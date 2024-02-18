@@ -2,6 +2,7 @@
 using System.Text;
 using SaveSystem.GuidsResolve;
 using Unity.Serialization.Json;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SaveSystem.Serializers
@@ -31,12 +32,40 @@ namespace SaveSystem.Serializers
         {
             var parameters = new JsonSerializationParameters
             {
-                UserDefinedAdapters = new List<IJsonAdapter> { new GuidJsonAdapter(guidsResolver) },
+                UserDefinedAdapters = new List<IJsonAdapter>
+                {
+                    new SerializationCallbacksTriggerJsonAdapter(),
+                    new GuidJsonAdapter(guidsResolver)
+                },
                 DisableRootAdapters = true
             };
             return parameters;
         }
     }
+
+    public class SerializationCallbacksTriggerJsonAdapter : IContravariantJsonAdapter<object>
+    {
+        public void Serialize(IJsonSerializationContext context, object value)
+        {
+            if (value is ISerializationCallbackReceiver receiver)
+            {
+                receiver.OnBeforeSerialize();
+            }
+            context.ContinueVisitation();
+        }
+
+        public object Deserialize(IJsonDeserializationContext context)
+        {
+            var result = context.ContinueVisitation();
+            if (result is ISerializationCallbackReceiver receiver)
+            {
+                receiver.OnAfterDeserialize();
+            }
+
+            return result;
+        }
+    }
+    
 
     public class GuidJsonAdapter : IContravariantJsonAdapter<Object>
     {

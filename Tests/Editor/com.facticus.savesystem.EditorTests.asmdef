@@ -4,6 +4,7 @@
     "references": [
         "com.facticus.savesystem",
         "com.facticus.savesystem.Editor",
+        "com.facticus.utils",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.PerformanceTesting"
