@@ -11,15 +11,18 @@ namespace SaveSystem.Tests.Editor
 {
     public class SerializersTests
     {
-        private const string UnitySerializerKey = "UnitySerializer";
+        private const string UnitySerializerBinaryKey = "UnitySerializerBinary";
+        private const string UnitySerializerJsonKey = "UnitySerializerJson";
 
         private readonly Dictionary<string, ISerializer> _serializers = new Dictionary<string, ISerializer>
         {
-            { UnitySerializerKey, new UnitySerializer() },
+            { UnitySerializerBinaryKey, new UnitySerializer(SerializationMode.Binary) },
+            { UnitySerializerJsonKey, new UnitySerializer(SerializationMode.Json) },
         };
         
-        [TestCase(UnitySerializerKey)]
-        public void WhenSerializeAnObject_ItsDeserializationHasTheProperTheValues_Test(string serializerKey)
+        [TestCase(UnitySerializerBinaryKey)]
+        [TestCase(UnitySerializerJsonKey)]
+        public void WhenSerializeAnObject_ItsDeserializationHasTheProperValues_Test(string serializerKey)
         {
             // arrange
             var serializer = _serializers[serializerKey];
