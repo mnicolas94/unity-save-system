@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -66,15 +67,36 @@ namespace SaveSystem.Editor
             ResetObjectData();
             RemoveObjectData();
         }
+        
+        [MenuItem("Assets/Facticus/SaveSystem/Open file location", false, 0)]
+        [MenuItem("CONTEXT/ScriptableObject/Open file location", false, 100)]
+        public static void OpenFileLocation()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets)[0];
+            var path = SaveUtils.GetPersistentPath(selected);
+            path = Path.GetFullPath(path);
+            if (File.Exists(path))
+            {
+                Process.Start("explorer.exe", "/select, " + path);
+            }
+        }
 
         [MenuItem("Assets/Facticus/SaveSystem/Save", true)]
         [MenuItem("Assets/Facticus/SaveSystem/Load", true)]
         [MenuItem("Assets/Facticus/SaveSystem/Remove data", true)]
         [MenuItem("Assets/Facticus/SaveSystem/Reset data", true)]
+        [MenuItem("Assets/Facticus/SaveSystem/Remove and reset data", true)]
         public static bool ValidateMenus()
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
             return selected.Length > 0;
+        }
+        
+        [MenuItem("Assets/Facticus/SaveSystem/Open file location", true)]
+        public static bool ValidateMenusOnlyOneSelected()
+        {
+            var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
+            return selected.Length == 1;
         }
         
         public static List<(Object obj, string guid)> GetDataObjectsAndGuids()
