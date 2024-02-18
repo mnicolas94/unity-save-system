@@ -20,6 +20,7 @@ MonoBehaviour:
   _searchDatabaseAssetsInPaths:
   - Assets/SaveSystem/Samples/Persistents
   - Assets/SaveSystem/Tests/Editor/Data
+  - Assets/SaveSystem/Samples/Integrations/Atoms
   _ignoreDatabaseAssetsInPaths: []
   _populateDatabaseBeforeEnterPlayMode: 1
   _broadcaster:
@@ -35,6 +36,8 @@ MonoBehaviour:
     RefIds:
     - rid: 2350179849866838017
       type: {class: UnitySerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
+      data:
+        _mode: 1
     - rid: 8263538504144257024
       type: {class: GuidsDatabase, ns: SaveSystem.GuidsResolve, asm: com.facticus.savesystem}
       data:
@@ -47,6 +50,11 @@ MonoBehaviour:
         - {fileID: 11400000, guid: 56cbcf9014bf60747b7dcf68b28023e7, type: 2}
         - {fileID: 11400000, guid: 783ac5c3538aba94bbab774637d701fd, type: 2}
         - {fileID: 11500000, guid: e1ad70e6d77d4dc286a77ba7daa0c8ea, type: 3}
+        - {fileID: 11400000, guid: 852e2a0f7eeecee4aaedd30bcc3cc16b, type: 2}
+        - {fileID: 11400000, guid: 3ec349c8e69e3a84bbb1cd168c511f55, type: 2}
+        - {fileID: 11400000, guid: 94359032240746f4fadcb95af5c7d0fc, type: 2}
+        - {fileID: 11400000, guid: c284e7c4f1669c44cb949d7b49e92e0a, type: 2}
+        - {fileID: 11400000, guid: 56f0cb43530c4714aabc61565ca800b4, type: 2}
         _guids:
         - 208746278a96d5d419f3c5f3711dce4e
         - 838d432941c4911479913d8da0236760
@@ -56,3 +64,8 @@ MonoBehaviour:
         - 56cbcf9014bf60747b7dcf68b28023e7
         - 783ac5c3538aba94bbab774637d701fd
         - e1ad70e6d77d4dc286a77ba7daa0c8ea
+        - 852e2a0f7eeecee4aaedd30bcc3cc16b
+        - 3ec349c8e69e3a84bbb1cd168c511f55
+        - 94359032240746f4fadcb95af5c7d0fc
+        - c284e7c4f1669c44cb949d7b49e92e0a
+        - 56f0cb43530c4714aabc61565ca800b4
