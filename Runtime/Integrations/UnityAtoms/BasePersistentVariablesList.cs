@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if ENABLED_ATOMS
+using System.Collections.Generic;
 using SaveSystem.Attributes;
 using SaveSystem.GuidsResolve;
 using UnityAtoms;
@@ -76,3 +77,4 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         }
     }
 }
+#endif

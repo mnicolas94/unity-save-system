@@ -1,4 +1,5 @@
-﻿using UnityAtoms.BaseAtoms;
+﻿#if ENABLED_ATOMS
+using UnityAtoms.BaseAtoms;
 using UnityEngine;
 
 namespace SaveSystem.Runtime.Integrations.UnityAtoms
@@ -9,3 +10,4 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
     {
     }
 }
+#endif
