@@ -1,6 +1,7 @@
 ﻿#if ENABLED_ATOMS
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 using SaveSystem.Attributes;
 using SaveSystem.GuidsResolve;
 using UnityAtoms;
@@ -9,24 +10,31 @@ using Utils.Serializables;
 
 namespace SaveSystem.Runtime.Integrations.UnityAtoms
 {
-    public abstract class BasePersistentVariablesList<T, P, E1, E2, F> : ScriptableObject, IPersistentCallbackReceiver
+    public abstract class BasePersistentVariablesList<T, P, C, V, E1, E2, F, I, R>
+        : ScriptableObject, IPersistentCallbackReceiver, IPersistentResetable
         where P : struct, IPair<T>
+        where C : AtomBaseVariable<T>
+        where V : AtomVariable<T, P, E1, E2, F>
         where E1 : AtomEvent<T>
         where E2 : AtomEvent<P>
         where F : AtomFunction<T, T>
+        where I : AtomVariableInstancer<V, P, T, E1, E2, F>
+        where R : AtomReference<T, P, C, V, E1, E2, F, I>
     {
-        [SerializeField, DoNotPersist] private List<AtomVariable<T, P, E1, E2, F>> _variables;
+        [SerializeField, DoNotPersist] private SerializableDictionary<AtomVariable<T, P, E1, E2, F>, R> _variables = new();
         [SerializeField, DoNotPersist] private bool _autoSave;
-        [SerializeField] private SerializableDictionary<string, T> _values = new();
+        [SerializeField, HideInInspector] private SerializableDictionary<string, T> _values = new();
 
-        public ReadOnlyCollection<AtomVariable<T, P, E1, E2, F>> Variables => _variables.AsReadOnly();
-        public List<T> Values => _variables.ConvertAll(variable => variable.Value);
+        public List<AtomVariable<T, P, E1, E2, F>> Variables => _variables.Keys.ToList();
 
         private void OnEnable()
         {
             if (_autoSave)
             {
-                _variables.ForEach(variable => variable.Changed.Register(OnVariableChange));
+                foreach (var (variable, _) in _variables)
+                {
+                    variable.Changed.Register(OnVariableChange);
+                }
             }
         }
 
@@ -34,7 +42,10 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         {
             if (_autoSave)
             {
-                _variables.ForEach(variable => variable.Changed.Unregister(OnVariableChange));
+                foreach (var (variable, _) in _variables)
+                {
+                    variable.Changed.Unregister(OnVariableChange);
+                }
             }
         }
         
@@ -49,7 +60,7 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         public void OnBeforeSave(IGuidResolver guidsDatabase)
         {
             _values.Clear();
-            foreach (var variable in _variables)
+            foreach (var (variable, _) in _variables)
             {
                 var guid = guidsDatabase.GetGuid(variable);
                 _values[guid] = variable.Value;
@@ -68,7 +79,7 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
 
         public void OnAfterLoad(IGuidResolver guidsDatabase)
         {
-            foreach (var variable in _variables)
+            foreach (var (variable, _) in _variables)
             {
                 var guid = guidsDatabase.GetGuid(variable);
                 if (_values.ContainsKey(guid))
@@ -78,6 +89,29 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
             }
             _values.Clear();
         }
+
+        public void ResetToDefault()
+        {
+            foreach (var (variable, defaultValue) in _variables)
+            {
+                variable.Value = defaultValue.Value;
+            }
+        }
+    }
+
+    [Serializable]
+    public class VariableDefaultValueTuple<T, P, C, V, E1, E2, F, I, R>
+        where P : struct, IPair<T>
+        where C : AtomBaseVariable<T>
+        where V : AtomVariable<T, P, E1, E2, F>
+        where E1 : AtomEvent<T>
+        where E2 : AtomEvent<P>
+        where F : AtomFunction<T, T>
+        where I : AtomVariableInstancer<V, P, T, E1, E2, F>
+        where R : AtomReference<T, P, C, V, E1, E2, F, I>
+    {
+        public AtomVariable<T, P, E1, E2, F> Variable;
+        public R DefaultValue;
     }
 }
 #endif

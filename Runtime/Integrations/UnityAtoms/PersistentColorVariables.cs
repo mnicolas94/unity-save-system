@@ -6,7 +6,7 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
 {
     [CreateAssetMenu(menuName = "Facticus/Save System/Persistent variables list/Color variables",
         fileName = "PersistentColorVariables", order = 0)]
-    public class PersistentColorVariables : BasePersistentVariablesList<Color, ColorPair, ColorEvent, ColorPairEvent, ColorColorFunction>
+    public class PersistentColorVariables : BasePersistentVariablesList<Color, ColorPair, ColorConstant, ColorVariable, ColorEvent, ColorPairEvent, ColorColorFunction, ColorVariableInstancer, ColorReference>
     {
     }
 }

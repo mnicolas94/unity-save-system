@@ -6,7 +6,7 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
 {
     [CreateAssetMenu(menuName = "Facticus/Save System/Persistent variables list/Quaternion variables",
         fileName = "PersistentQuaternionVariables", order = 0)]
-    public class PersistentQuaternionVariables : BasePersistentVariablesList<Quaternion, QuaternionPair, QuaternionEvent, QuaternionPairEvent, QuaternionQuaternionFunction>
+    public class PersistentQuaternionVariables : BasePersistentVariablesList<Quaternion, QuaternionPair, QuaternionConstant, QuaternionVariable, QuaternionEvent, QuaternionPairEvent, QuaternionQuaternionFunction, QuaternionVariableInstancer, QuaternionReference>
     {
     }
 }
