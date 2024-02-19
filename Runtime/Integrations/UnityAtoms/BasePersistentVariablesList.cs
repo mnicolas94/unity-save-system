@@ -17,7 +17,7 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
     {
         [SerializeField, DoNotPersist] private List<AtomVariable<T, P, E1, E2, F>> _variables;
         [SerializeField, DoNotPersist] private bool _autoSave;
-        [SerializeField] private SerializableDictionary<string, T> _values;
+        [SerializeField] private SerializableDictionary<string, T> _values = new();
 
         public ReadOnlyCollection<AtomVariable<T, P, E1, E2, F>> Variables => _variables.AsReadOnly();
         public List<T> Values => _variables.ConvertAll(variable => variable.Value);
