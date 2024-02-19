@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace SaveSystem.GuidsResolve
 {
-    [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "Facticus/Save system/AssetGuidsDatabase", order = 0)]
+    // [CreateAssetMenu(fileName = "AssetGuidsDatabase", menuName = "Facticus/Save system/AssetGuidsDatabase", order = 0)]
     public class AssetGuidsDatabase : ScriptableObjectSingleton<AssetGuidsDatabase>, IGuidResolver
     {
         [SerializeField] private List<Object> _assets = new List<Object>();
