@@ -1,6 +1,6 @@
 {
   "name": "com.facticus.savesystem",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "displayName": "Save System",
   "description": "An easy to use save system for Unity",
   "unity": "2021.1",
