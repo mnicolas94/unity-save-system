@@ -1,5 +1,6 @@
 ﻿#if ENABLED_ATOMS
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using SaveSystem.Attributes;
 using SaveSystem.GuidsResolve;
 using UnityAtoms;
@@ -17,7 +18,9 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         [SerializeField, DoNotPersist] private List<AtomVariable<T, P, E1, E2, F>> _variables;
         [SerializeField, DoNotPersist] private bool _autoSave;
         [SerializeField] private SerializableDictionary<string, T> _values;
-        
+
+        public ReadOnlyCollection<AtomVariable<T, P, E1, E2, F>> Variables => _variables.AsReadOnly();
+        public List<T> Values => _variables.ConvertAll(variable => variable.Value);
 
         private void OnEnable()
         {
