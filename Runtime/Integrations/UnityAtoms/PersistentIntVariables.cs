@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace SaveSystem.Runtime.Integrations.UnityAtoms
 {
-    [CreateAssetMenu(menuName = "Persistence/Int variable", fileName = "IntVariable", order = 0)]
+    [CreateAssetMenu(menuName = "Facticus/SaveSystem/Persistent variables list/Int variable",
+        fileName = "IntVariable", order = 0)]
     public class PersistentIntVariables : BasePersistentVariablesList<int, IntPair, IntEvent, IntPairEvent, IntIntFunction>
     {
     }

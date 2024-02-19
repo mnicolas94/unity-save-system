@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace SaveSystem.Runtime.Integrations.UnityAtoms
 {
-    [CreateAssetMenu(menuName = "Persistence/Color variables", fileName = "PersistentColorVariables", order = 0)]
+    [CreateAssetMenu(menuName = "Facticus/SaveSystem/Persistent variables list/Color variables",
+        fileName = "PersistentColorVariables", order = 0)]
     public class PersistentColorVariables : BasePersistentVariablesList<Color, ColorPair, ColorEvent, ColorPairEvent, ColorColorFunction>
     {
     }
