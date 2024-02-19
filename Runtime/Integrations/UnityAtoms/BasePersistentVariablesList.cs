@@ -21,11 +21,11 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         where I : AtomVariableInstancer<V, P, T, E1, E2, F>
         where R : AtomReference<T, P, C, V, E1, E2, F, I>
     {
-        [SerializeField, DoNotPersist] private SerializableDictionary<AtomVariable<T, P, E1, E2, F>, R> _variables = new();
+        [SerializeField, DoNotPersist] private SerializableDictionary<V, R> _variables = new();
         [SerializeField, DoNotPersist] private bool _autoSave;
         [SerializeField, HideInInspector] private SerializableDictionary<string, T> _values = new();
 
-        public List<AtomVariable<T, P, E1, E2, F>> Variables => _variables.Keys.ToList();
+        public List<V> Variables => _variables.Keys.ToList();
 
         private void OnEnable()
         {
