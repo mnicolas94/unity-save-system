@@ -88,7 +88,7 @@ namespace SaveSystem.Serializers
             var guid = "";
             if (_resolver != null && value != null)
             {
-                _resolver.TryGetGuid(value, out guid);
+                guid = _resolver.GetGuid(value);
             }
             
             context.SerializeValue(guid);
@@ -99,7 +99,7 @@ namespace SaveSystem.Serializers
             var guid = context.DeserializeValue<string>();
             if (_resolver != null && !string.IsNullOrEmpty(guid))
             {
-                _resolver.TryGetObject(guid, out var value);
+                var value = _resolver.GetObject(guid);
                 
                 return value;
             }

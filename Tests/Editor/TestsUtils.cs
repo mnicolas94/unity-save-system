@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SaveSystem.GuidsResolve;
 using SaveSystem.Serializers;
 
 namespace SaveSystem.Tests.Editor
@@ -14,6 +15,13 @@ namespace SaveSystem.Tests.Editor
         {
             { UnitySerializerBinaryKey, new UnitySerializer(SerializationMode.Binary) },
             { UnitySerializerJsonKey, new UnitySerializer(SerializationMode.Json) },
+        };
+        
+        public const string GuidsDatabaseKey = "GuidsDatabase";
+
+        public static readonly Dictionary<string, IGuidResolver> GuidsResolvers = new Dictionary<string, IGuidResolver>
+        {
+            { UnitySerializerBinaryKey, new GuidsDatabase() },
         };
         
         public static IEnumerator RunTaskAsCoroutine(Task task)

@@ -18,7 +18,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 3ec349c8e69e3a84bbb1cd168c511f55, type: 2}
     - {fileID: 11400000, guid: 94359032240746f4fadcb95af5c7d0fc, type: 2}
     m_values:
-    - _usage: 0
+    - _usage: 2
       _value: 0
       _constant: {fileID: 0}
       _variable: {fileID: 0}
@@ -29,36 +29,11 @@ MonoBehaviour:
       _variable: {fileID: 0}
       _variableInstancer: {fileID: 0}
     - _usage: 0
-      _value: 0
-      _constant: {fileID: 0}
-      _variable: {fileID: 0}
-      _variableInstancer: {fileID: 0}
-  _revvariables:
-    m_keys:
-    - _usage: 0
-      _value: 0
-      _constant: {fileID: 0}
-      _variable: {fileID: 0}
-      _variableInstancer: {fileID: 0}
-    m_values:
-    - {fileID: 11400000, guid: 94359032240746f4fadcb95af5c7d0fc, type: 2}
-  _svariables:
-  - Variable: {fileID: 11400000, guid: 3ec349c8e69e3a84bbb1cd168c511f55, type: 2}
-    DefaultValue:
-      _usage: 0
-      _value: 654
-      _constant: {fileID: 0}
-      _variable: {fileID: 11400000, guid: 94359032240746f4fadcb95af5c7d0fc, type: 2}
-      _variableInstancer: {fileID: 0}
-  - Variable: {fileID: 0}
-    DefaultValue:
-      _usage: 0
       _value: 0
       _constant: {fileID: 0}
       _variable: {fileID: 0}
       _variableInstancer: {fileID: 0}
   _autoSave: 0
   _values:
-    m_keys:
-    - 
-    m_values: 00000000
+    m_keys: []
+    m_values: 

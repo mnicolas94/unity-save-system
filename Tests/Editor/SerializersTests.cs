@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SaveSystem.GuidsResolve;
 using UnityEngine;
 using Utils.Serializables;
+using Object = UnityEngine.Object;
 
 namespace SaveSystem.Tests.Editor
 {
@@ -61,6 +62,45 @@ namespace SaveSystem.Tests.Editor
                 Assert.AreEqual(value, deserialized.Dictionary[key]);
             }
         }
+        
+        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
+        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        public void WhenSerializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
+        {
+            // arrange
+            var serializer = TestsUtils.Serializers[serializerKey];
+            var data = ScriptableObject.CreateInstance<PersistentObject>();
+            data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
+            var guidResolver = new GuidsDatabase();
+            
+            // act and assert
+            Assert.Throws<ArgumentException>(() => serializer.Serialize(data, guidResolver));
+        }
+        
+        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
+        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        public void WhenDeserializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
+        {
+            // arrange
+            var serializer = TestsUtils.Serializers[serializerKey];
+            var data = ScriptableObject.CreateInstance<PersistentObject>();
+            data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
+            
+            // populate database to get a valid serialization
+            var guidResolver = new GuidsDatabase();
+            var databaseData = new List<(Object, string)>
+            {
+                (data.Reference, "arbitrary guid")  
+            };
+            guidResolver.PopulateDatabase(databaseData);
+            var bytes = serializer.Serialize(data, guidResolver);
+            
+            // get an empty guids database to simulate a deserialization without the proper guids
+            var emptyResolver = new GuidsDatabase();
+
+            // act and assert
+            Assert.Throws<ArgumentException>(() => serializer.Deserialize(bytes, data, emptyResolver));
+        }
     }
 
     public class PersistentObject : ScriptableObject
@@ -68,7 +108,7 @@ namespace SaveSystem.Tests.Editor
         public string S;
         public int I;
         public List<bool> Lb;
-        public PersistentObject _reference;
+        public PersistentObject Reference;
         public SerializableDictionary<string, int> Dictionary;
     }
 }
