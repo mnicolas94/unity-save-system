@@ -89,7 +89,10 @@ namespace SaveSystem.Serializers
             var guid = "";
             if (_resolver != null && value != null)
             {
-                guid = _resolver.GetGuid(value);
+                if (!_resolver.TryGetGuid(value, out guid))
+                {
+                    Debug.LogError($"Couldn't serialize object {value}");
+                }
             }
             
             context.SerializeValue(guid);
@@ -100,7 +103,10 @@ namespace SaveSystem.Serializers
             var guid = context.DeserializeValue<string>();
             if (_resolver != null && !string.IsNullOrEmpty(guid))
             {
-                var value = _resolver.GetObject(guid);
+                if (!_resolver.TryGetObject(guid, out var value))
+                {
+                    Debug.LogError($"Couldn't deserialize guid {guid}");
+                }
                 
                 return value;
             }

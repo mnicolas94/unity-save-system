@@ -63,36 +63,40 @@ namespace SaveSystem.Tests.Editor
         [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
         public void WhenSerializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(ISerializer serializer)
         {
-            // arrange
-            var data = ScriptableObject.CreateInstance<PersistentObject>();
-            data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
-            var guidResolver = new GuidsDatabase();
+            // this behaviour is not wanted anymore
             
-            // act and assert
-            Assert.Throws<ArgumentException>(() => serializer.Serialize(data, guidResolver));
+            // // arrange
+            // var data = ScriptableObject.CreateInstance<PersistentObject>();
+            // data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
+            // var guidResolver = new GuidsDatabase();
+            //
+            // // act and assert
+            // Assert.Throws<ArgumentException>(() => serializer.Serialize(data, guidResolver));
         }
         
         [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
         public void WhenDeserializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(ISerializer serializer)
         {
-            // arrange
-            var data = ScriptableObject.CreateInstance<PersistentObject>();
-            data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
+            // this behaviour is not wanted anymore
             
-            // populate database to get a valid serialization
-            var guidResolver = new GuidsDatabase();
-            var databaseData = new List<(Object, string)>
-            {
-                (data.Reference, "arbitrary guid")  
-            };
-            guidResolver.PopulateDatabase(databaseData);
-            var bytes = serializer.Serialize(data, guidResolver);
-            
-            // get an empty guids database to simulate a deserialization without the proper guids
-            var emptyResolver = new GuidsDatabase();
-
-            // act and assert
-            Assert.Throws<ArgumentException>(() => serializer.Deserialize(bytes, data, emptyResolver));
+            // // arrange
+            // var data = ScriptableObject.CreateInstance<PersistentObject>();
+            // data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
+            //
+            // // populate database to get a valid serialization
+            // var guidResolver = new GuidsDatabase();
+            // var databaseData = new List<(Object, string)>
+            // {
+            //     (data.Reference, "arbitrary guid")  
+            // };
+            // guidResolver.PopulateDatabase(databaseData);
+            // var bytes = serializer.Serialize(data, guidResolver);
+            //
+            // // get an empty guids database to simulate a deserialization without the proper guids
+            // var emptyResolver = new GuidsDatabase();
+            //
+            // // act and assert
+            // Assert.Throws<ArgumentException>(() => serializer.Deserialize(bytes, data, emptyResolver));
         }
     }
 

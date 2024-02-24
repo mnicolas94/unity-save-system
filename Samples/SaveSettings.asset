@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SaveSettings
   m_EditorClassIdentifier: 
   _storage:
-    rid: 231199910836830208
+    rid: 231199910836830239
   _profile: 
   _serializer:
     rid: 2350179849866838017
@@ -37,10 +37,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 231199910836830208
-      type: {class: FilesStorage, ns: SaveSystem.Storages, asm: com.facticus.savesystem}
-      data:
-        _fileExtension: dat
+    - rid: 231199910836830239
+      type: {class: PlayerPrefsStorage, ns: SaveSystem.Storages, asm: com.facticus.savesystem}
+      data: 
     - rid: 2350179849866838017
       type: {class: UnitySerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
       data:
