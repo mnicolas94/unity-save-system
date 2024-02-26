@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/SaveSystem/Editor/StoredDataVisualizationWindow/Resources/SaveVisualizer.uss?fileID=7433441132597879392&amp;guid=1e1f0195882a3fc42ab3a220546cc045&amp;type=3#SaveVisualizer" />
+    <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ErrorMessagesLabel" />
+    <ui:VisualElement name="RootContainer" style="flex-grow: 1; flex-direction: column; padding-top: 4px; padding-right: 4px; padding-bottom: 4px; padding-left: 4px;">
+        <ui:VisualElement name="ReportContainer" style="flex-grow: 1; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-bottom-left-radius: 0;">
+            <ui:Label tabindex="-1" text="Load report" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoadReportTitleLabel" class="title-label" />
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LoadReportLabel" style="white-space: normal;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="DataContainer" style="flex-grow: 1;">
+            <ui:Label tabindex="-1" text="Data" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DataTitleLabel" class="title-label" />
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DecryptedDataLabel" style="flex-grow: 1; flex-wrap: wrap; white-space: normal;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
