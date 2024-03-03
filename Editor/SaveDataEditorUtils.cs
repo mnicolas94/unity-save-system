@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SaveSystem.Storages;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -47,16 +48,18 @@ namespace SaveSystem.Editor
         
         [MenuItem("Assets/Facticus/SaveSystem/Remove data", false, 0)]
         [MenuItem("CONTEXT/ScriptableObject/Remove data", false, 100)]
-        public static void RemoveObjectData()
+        public static async void RemoveObjectData()
         {
+            var saveSystemSettings = SaveSystemSettings.Instance;
+            var storage = saveSystemSettings.Storage;
+            var guidResolver = saveSystemSettings.GuidsResolver;
+            var profile = SaveUtils.GetProfile();
+            
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
             foreach (var obj in selected)
             {
-                var path = SaveUtils.GetPersistentPath(obj);
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                }
+                var guid = guidResolver.GetGuid(obj);
+                await storage.Delete(profile, guid);
             }
         }
         
@@ -72,12 +75,21 @@ namespace SaveSystem.Editor
         [MenuItem("CONTEXT/ScriptableObject/Open file location", false, 100)]
         public static void OpenFileLocation()
         {
+            var saveSystemSettings = SaveSystemSettings.Instance;
+            var storage = saveSystemSettings.Storage;
+            var guidResolver = saveSystemSettings.GuidsResolver;
+            var profile = SaveUtils.GetProfile();
+            
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets)[0];
-            var path = SaveUtils.GetPersistentPath(selected);
-            path = Path.GetFullPath(path);
-            if (File.Exists(path))
+            var guid = guidResolver.GetGuid(selected);
+            if (storage is FilesStorage filesStorage)
             {
-                Process.Start("explorer.exe", "/select, " + path);
+                var path = filesStorage.GetFilePath(profile, guid);
+                path = Path.GetFullPath(path);
+                if (File.Exists(path))
+                {
+                    Process.Start("explorer.exe", "/select, " + path);
+                }
             }
         }
 

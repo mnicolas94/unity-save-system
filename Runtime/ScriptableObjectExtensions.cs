@@ -30,15 +30,16 @@ namespace SaveSystem
             return report;
         }
 
-        public static string GetPersistentFileName(this ScriptableObject obj)
+        public static async Task<bool> IsSaved(this ScriptableObject obj)
         {
-            return SaveUtils.GetPersistentFileName(obj);
-        }
+            var saveSystemSettings = SaveSystemSettings.Instance;
+            var storage = saveSystemSettings.Storage;
+            var guidResolver = saveSystemSettings.GuidsResolver;
 
-        public static bool IsSaved(this ScriptableObject obj)
-        {
-            var path = SaveUtils.GetPersistentPath(obj);
-            return File.Exists(path);
+            var profile = SaveUtils.GetProfile();
+            var guid = guidResolver.GetGuid(obj);
+            var exists = await storage.ExistsData(profile, guid);
+            return exists;
         }
         
         public static void ResetToDefault(this ScriptableObject obj)

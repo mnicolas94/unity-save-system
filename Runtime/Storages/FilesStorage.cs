@@ -10,14 +10,19 @@ namespace SaveSystem.Storages
     public class FilesStorage : IStorage
     {
         [SerializeField] private string _fileExtension = "dat";
-        
+
+        public async Task<bool> ExistsData(string profile, string key)
+        {
+            var filePath = GetFilePath(profile, key);
+            return File.Exists(filePath);
+        }
+
         public async Task Write(string profile, string key, byte[] data)
         {
             var filePath = GetFilePath(profile, key);
             var file = File.Open(filePath, FileMode.Create);
             
             await using var writer = new BinaryWriter(file);
-            writer.Write(data.Length);
             writer.Write(data);
         }
 
@@ -26,11 +31,8 @@ namespace SaveSystem.Storages
             var filePath = GetFilePath(profile, key);
             try
             {
-                var file = File.OpenRead(filePath);
-            
-                using var reader = new BinaryReader(file);
-                int dataLength = reader.ReadInt32();
-                var data = reader.ReadBytes(dataLength);
+                var data = await File.ReadAllBytesAsync(filePath);
+                // var data = File.ReadAllBytes(filePath);
 
                 return (true, data);
             }

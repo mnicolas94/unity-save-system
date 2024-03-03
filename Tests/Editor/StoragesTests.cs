@@ -1,14 +1,19 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
 using SaveSystem.Storages;
-using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace SaveSystem.Tests.Editor
 {
     public class StoragesTests
     {
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
-        public void WhenReadDataAfterWritingIt_TheDataIsTheSame_Test(IStorage storage)
+        public static List<TestCaseData> Storages => TestsUtils.Storages.ConvertAll(
+            storage => new TestCaseData(storage).Returns(null));
+        
+        [UnityTest, TestCaseSource(nameof(Storages))]
+        public IEnumerator WhenReadDataAfterWritingIt_TheDataIsTheSame_Test(IStorage storage)
         {
             // arrange
             var profile = "profile";
@@ -16,35 +21,39 @@ namespace SaveSystem.Tests.Editor
             var data = Encoding.UTF8.GetBytes("Data");
             
             // act
-            TestsUtils.RunAsyncMethodSync(storage.Write(profile, key, data));
-            var (success, result) = TestsUtils.RunAsyncMethodSync(storage.Read(profile, key));
+            yield return TestsUtils.RunTaskAsCoroutine(storage.Write(profile, key, data));
+            var readTask = storage.Read(profile, key);
+            yield return TestsUtils.RunTaskAsCoroutine(readTask);
+            var (success, result) = readTask.Result;
             
             // assert
             Assert.IsTrue(success);
             Assert.AreEqual(data, result);
             
             // tear down
-            TestsUtils.RunAsyncMethodSync(storage.Delete(profile, key));
+            yield return TestsUtils.RunTaskAsCoroutine(storage.Delete(profile, key));
         }
         
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
-        public void WhenReadUnExistentData_TheReturnedBoolIsFalse_Test(IStorage storage)
+        [UnityTest, TestCaseSource(nameof(Storages))]
+        public IEnumerator WhenReadUnExistentData_TheReturnedBoolIsFalse_Test(IStorage storage)
         {
             // arrange
             var profile = "profile";
             var key = "key";
             // make sure it doesn't exist
-            TestsUtils.RunAsyncMethodSync(storage.Delete(profile, key));
+            yield return TestsUtils.RunTaskAsCoroutine(storage.Delete(profile, key));
             
             // act
-            var (success, result) = TestsUtils.RunAsyncMethodSync(storage.Read(profile, key));
+            var readTask = storage.Read(profile, key);
+            yield return TestsUtils.RunTaskAsCoroutine(readTask);
+            var (success, result) = readTask.Result;
             
             // assert
             Assert.IsFalse(success);
         }
         
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
-        public void WhenReadDataAfterDeletingIt_TheReturnedBoolIsFalse_Test(IStorage storage)
+        [UnityTest, TestCaseSource(nameof(Storages))]
+        public IEnumerator WhenReadDataAfterDeletingIt_TheReturnedBoolIsFalse_Test(IStorage storage)
         {
             // arrange
             var profile = "profile";
@@ -52,12 +61,14 @@ namespace SaveSystem.Tests.Editor
             var data = Encoding.UTF8.GetBytes("Data");
             
             // act
-            TestsUtils.RunAsyncMethodSync(storage.Write(profile, key, data));
-            TestsUtils.RunAsyncMethodSync(storage.Delete(profile, key));
-            var (success, result) = TestsUtils.RunAsyncMethodSync(storage.Read(profile, key));
+            yield return TestsUtils.RunTaskAsCoroutine(storage.Write(profile, key, data));
+            yield return TestsUtils.RunTaskAsCoroutine(storage.Delete(profile, key));
+            var readTask = storage.Read(profile, key);
+            yield return TestsUtils.RunTaskAsCoroutine(readTask);
+            var (success, result) = readTask.Result;
             
             // assert
-            Assert.AreEqual(false, success);
+            Assert.IsFalse(success);
         }
     }
 }

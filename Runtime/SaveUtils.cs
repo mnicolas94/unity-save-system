@@ -62,22 +62,9 @@ namespace SaveSystem
             }
         }
         
-        private static readonly string EXT = "dat";
-        
-        public static string GetPersistentPath(ScriptableObject obj)
+        public static string GetProfile()
         {
-#if UNITY_EDITOR
-            var filePath = Path.Combine(Application.persistentDataPath, $"editor-{GetPersistentFileName(obj)}.{EXT}");
-#else
-                var filePath = Path.Combine(Application.persistentDataPath, $"{GetPersistentFileName(obj)}.{EXT}");
-#endif
-            return filePath;
-        }
-
-        public static string GetPersistentFileName(ScriptableObject obj)
-        {
-            var guid = SaveSystemSettings.Instance.GuidsResolver.GetGuid(obj);
-            return guid;
+            return "profile";  // TODO get proper profile
         }
 
         public static void ResetPersistentObject(ScriptableObject obj)
@@ -97,7 +84,8 @@ namespace SaveSystem
         {
             await Task.Yield();  // this is to allow this function to run asynchronously
             
-            var guidResolver = SaveSystemSettings.Instance.GuidsResolver;
+            var saveSystemSettings = SaveSystemSettings.Instance;
+            var guidResolver = saveSystemSettings.GuidsResolver;
             
             if (obj is IPersistentCallbackReceiver receiverBefore)
             {
@@ -105,7 +93,7 @@ namespace SaveSystem
             }
             
             // serialize object
-            var serializer = SaveSystemSettings.Instance.Serializer;
+            var serializer = saveSystemSettings.Serializer;
             byte[] data;
             
             if (obj is IPersistentCustomSerializable customSerializable)
@@ -121,21 +109,26 @@ namespace SaveSystem
             var version = Application.version;
             var deviceId = SystemInfo.deviceUniqueIdentifier;
             var checksum = GenerateMd5(data);
-            var encryptedData = SaveSystemSettings.Instance.EncryptData
+            var encryptedData = saveSystemSettings.EncryptData
                 ? DesEncryption.Encrypt(data, Pass)
                 : data;
 
             // write in storage
-            var filePath = GetPersistentPath(obj);
-            var file = File.Open(filePath, FileMode.Create);
-            await using var writer = new BinaryWriter(file);
+            await using var memoryStream = new MemoryStream();
+            await using var writer = new BinaryWriter(memoryStream);
             writer.Write(version);
             writer.Write(deviceId);
             writer.Write(checksum.Length);
             writer.Write(checksum);
             writer.Write(encryptedData.Length);
             writer.Write(encryptedData);
-            DebugLog($"- SaveUtils.SaveObject: saving to {filePath}");
+            
+            var storage = saveSystemSettings.Storage;
+            var guid = guidResolver.GetGuid(obj);
+            var profile = GetProfile();
+            await storage.Write(profile, guid, memoryStream.ToArray());
+            
+            // DebugLog($"- SaveUtils.SaveObject: saving to {filePath}");
             
             if (obj is IPersistentCallbackReceiver receiverAfter)
             {
@@ -156,21 +149,26 @@ namespace SaveSystem
                     receiverBefore.OnBeforeLoad();
                 }
             
-                var filePath = GetPersistentPath(obj);
-                report.FilePath = filePath;
-                DebugLog($"- SaveUtils.LoadObject: loading from {filePath}");
+                // DebugLog($"- SaveUtils.LoadObject: loading from {filePath}");
+                var saveSystemSettings = SaveSystemSettings.Instance;
+                var storage = saveSystemSettings.Storage;
+                var guidResolver = saveSystemSettings.GuidsResolver;
 
-                if(!File.Exists(filePath))
+                var profile = GetProfile();
+                var guid = guidResolver.GetGuid(obj);
+                var (success, storageData) = await storage.Read(profile, guid);
+
+                if(!success)
                 {
                     report.Success = false;
-                    report.FailureReason = "File not found";
+                    report.FailureReason = "Storage couldn't load data";
                     report.FileExisted = false;
                     return report;
                 }
 
                 // read from storage and fill report
-                var file = File.OpenRead(filePath);
-                using var reader = new BinaryReader(file);
+                await using var memoryStream = new MemoryStream(storageData);
+                using var reader = new BinaryReader(memoryStream);
                 var version = reader.ReadString();
                 var deviceId = reader.ReadString();
                 int checksumLength = reader.ReadInt32();
@@ -179,7 +177,7 @@ namespace SaveSystem
                 var data = reader.ReadBytes(dataLength);
 
                 byte[] decryptedData;
-                if (SaveSystemSettings.Instance.EncryptData)
+                if (saveSystemSettings.EncryptData)
                     DesEncryption.TryDecrypt(data, Pass, out decryptedData);
                 else
                     decryptedData = data;
@@ -194,8 +192,7 @@ namespace SaveSystem
                 report.DataStr = Encoding.UTF8.GetString(decryptedData);
 
                 // deserialize data
-                var serializer = SaveSystemSettings.Instance.Serializer;
-                var guidResolver = SaveSystemSettings.Instance.GuidsResolver;
+                var serializer = saveSystemSettings.Serializer;
             
                 if (obj is IPersistentCustomSerializable customSerializable)
                 {

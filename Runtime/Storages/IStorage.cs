@@ -5,6 +5,14 @@ namespace SaveSystem.Storages
     public interface IStorage
     {
         /// <summary>
+        /// Whether a key's data is stored for a given profile.
+        /// </summary>
+        /// <param name="profile"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        Task<bool> ExistsData(string profile, string key);
+        
+        /// <summary>
         /// Writes a key's data for a specific profile.
         /// </summary>
         /// <param name="profile"></param>
