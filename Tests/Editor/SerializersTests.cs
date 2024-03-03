@@ -10,8 +10,7 @@ namespace SaveSystem.Tests.Editor
 {
     public class SerializersTests
     {
-        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
         public void WhenSerializeAnObject_ItsDeserializationHasTheProperValues_Test(string serializerKey)
         {
             // arrange
@@ -34,8 +33,7 @@ namespace SaveSystem.Tests.Editor
             Assert.AreEqual(expected.Lb, deserialized.Lb);
         }
         
-        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
         public void WhenSerializeAFieldThatDependsOnISerializationCallbackReceiverInterface_ItsDeserializationHasTheProperValues_Test(string serializerKey)
         {
             // arrange
@@ -63,8 +61,7 @@ namespace SaveSystem.Tests.Editor
             }
         }
         
-        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
         public void WhenSerializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
         {
             // arrange
@@ -77,8 +74,7 @@ namespace SaveSystem.Tests.Editor
             Assert.Throws<ArgumentException>(() => serializer.Serialize(data, guidResolver));
         }
         
-        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
         public void WhenDeserializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
         {
             // arrange

@@ -12,8 +12,7 @@ namespace SaveSystem.Tests.Runtime
     public class PerformanceTests
     {
         [Performance]
-        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
         public void Serialization_PerformanceTest(string serializerKey)
         {
             // arrange
@@ -25,8 +24,7 @@ namespace SaveSystem.Tests.Runtime
         }
         
         [Performance]
-        [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-        [TestCase(TestsUtils.UnitySerializerJsonKey)]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
         public void SerializationLargeObject_PerformanceTest(string serializerKey)
         {
             // arrange

@@ -57,14 +57,11 @@ namespace SaveSystem.Editor.StoredDataVisualizationWindow
             bool displayError = false;
             if (selected.Length == 0)
             {
-                // clear editor
                 displayError = true;
                 _errorMessagesLabel.text = "No asset selected";
             }
             else if (selected.Length > 1)
             {
-                // clear editor
-                // show message of not support for multiple assets
                 displayError = true;
                 _errorMessagesLabel.text = "Multiple assets not supported";
             }
