@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using SaveSystem.GuidsResolve;
 using SaveSystem.Serializers;
+using SaveSystem.Storages;
 using UnityEngine;
 using Utils;
 
@@ -9,6 +10,10 @@ namespace SaveSystem
     [CreateAssetMenu(fileName = "SaveSystemSettings", menuName = "Facticus/Save System/SaveSystemSettings")]
     public class SaveSystemSettings : ScriptableObjectSingleton<SaveSystemSettings>
     {
+        [Header("Storage")]
+        [SerializeReference, SubclassSelector] private IStorage _storage = new FilesStorage();
+        public IStorage Storage => _storage;
+
         [Header("Serialization")]
         [SerializeReference, SubclassSelector] private ISerializer _serializer;
         public ISerializer Serializer => _serializer;
