@@ -1,103 +1,63 @@
-﻿// using System;
-// using System.Collections.Generic;
-// using NUnit.Framework;
-// using SaveSystem.GuidsResolve;
-// using UnityEngine;
-// using Utils.Serializables;
-// using Object = UnityEngine.Object;
-//
-// namespace SaveSystem.Tests.Editor
-// {
-//     public class StoragesTests
-//     {
-//         public void WhenSerializeAnObject_ItsDeserializationHasTheProperValues_Test(string serializerKey)
-//         {
-//             // arrange
-//             var serializer = TestsUtils.Serializers[serializerKey];
-//             var expected = ScriptableObject.CreateInstance<PersistentObject>();
-//             expected.I = 42;
-//             expected.S = "Hello serializer";
-//             expected.Lb = new List<bool> { true, false, true };
-//             // var guidResolver = new RandomGuidResolver();
-//             var guidResolver = new GuidsDatabase();
-//             
-//             // act
-//             var bytes = serializer.Serialize(expected, guidResolver);
-//             var deserialized = ScriptableObject.CreateInstance<PersistentObject>();
-//             serializer.Deserialize(bytes, deserialized, guidResolver);
-//
-//             // assert
-//             Assert.AreEqual(expected.I, deserialized.I);
-//             Assert.AreEqual(expected.S, deserialized.S);
-//             Assert.AreEqual(expected.Lb, deserialized.Lb);
-//         }
-//         
-//         [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-//         [TestCase(TestsUtils.UnitySerializerJsonKey)]
-//         public void WhenSerializeAFieldThatDependsOnISerializationCallbackReceiverInterface_ItsDeserializationHasTheProperValues_Test(string serializerKey)
-//         {
-//             // arrange
-//             var serializer = TestsUtils.Serializers[serializerKey];
-//             var expected = ScriptableObject.CreateInstance<PersistentObject>();
-//             expected.Dictionary = new SerializableDictionary<string, int>
-//             {
-//                 {"a", 1},
-//                 {"b", -1},
-//                 {"c", 123},
-//             };
-//             var guidResolver = new GuidsDatabase();
-//             
-//             // act
-//             var bytes = serializer.Serialize(expected, guidResolver);
-//             var deserialized = ScriptableObject.CreateInstance<PersistentObject>();
-//             serializer.Deserialize(bytes, deserialized, guidResolver);
-//
-//             // assert
-//             Assert.AreEqual(expected.Dictionary.Count, deserialized.Dictionary.Count);
-//             foreach (var (key, value) in expected.Dictionary)
-//             {
-//                 Assert.IsTrue(deserialized.Dictionary.ContainsKey(key));
-//                 Assert.AreEqual(value, deserialized.Dictionary[key]);
-//             }
-//         }
-//         
-//         [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-//         [TestCase(TestsUtils.UnitySerializerJsonKey)]
-//         public void WhenSerializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
-//         {
-//             // arrange
-//             var serializer = TestsUtils.Serializers[serializerKey];
-//             var data = ScriptableObject.CreateInstance<PersistentObject>();
-//             data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
-//             var guidResolver = new GuidsDatabase();
-//             
-//             // act and assert
-//             Assert.Throws<ArgumentException>(() => serializer.Serialize(data, guidResolver));
-//         }
-//         
-//         [TestCase(TestsUtils.UnitySerializerBinaryKey)]
-//         [TestCase(TestsUtils.UnitySerializerJsonKey)]
-//         public void WhenDeserializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
-//         {
-//             // arrange
-//             var serializer = TestsUtils.Serializers[serializerKey];
-//             var data = ScriptableObject.CreateInstance<PersistentObject>();
-//             data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
-//             
-//             // populate database to get a valid serialization
-//             var guidResolver = new GuidsDatabase();
-//             var databaseData = new List<(Object, string)>
-//             {
-//                 (data.Reference, "arbitrary guid")  
-//             };
-//             guidResolver.PopulateDatabase(databaseData);
-//             var bytes = serializer.Serialize(data, guidResolver);
-//             
-//             // get an empty guids database to simulate a deserialization without the proper guids
-//             var emptyResolver = new GuidsDatabase();
-//
-//             // act and assert
-//             Assert.Throws<ArgumentException>(() => serializer.Deserialize(bytes, data, emptyResolver));
-//         }
-//     }
-// }
+﻿using System.Text;
+using NUnit.Framework;
+using SaveSystem.Storages;
+using UnityEngine;
+
+namespace SaveSystem.Tests.Editor
+{
+    public class StoragesTests
+    {
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
+        public void WhenReadDataAfterWritingIt_TheDataIsTheSame_Test(IStorage storage)
+        {
+            // arrange
+            var profile = "profile";
+            var key = "key";
+            var data = Encoding.UTF8.GetBytes("Data");
+            
+            // act
+            TestsUtils.RunAsyncMethodSync(storage.Write(profile, key, data));
+            var (success, result) = TestsUtils.RunAsyncMethodSync(storage.Read(profile, key));
+            
+            // assert
+            Assert.IsTrue(success);
+            Assert.AreEqual(data, result);
+            
+            // tear down
+            TestsUtils.RunAsyncMethodSync(storage.Delete(profile, key));
+        }
+        
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
+        public void WhenReadUnExistentData_TheReturnedBoolIsFalse_Test(IStorage storage)
+        {
+            // arrange
+            var profile = "profile";
+            var key = "key";
+            // make sure it doesn't exist
+            TestsUtils.RunAsyncMethodSync(storage.Delete(profile, key));
+            
+            // act
+            var (success, result) = TestsUtils.RunAsyncMethodSync(storage.Read(profile, key));
+            
+            // assert
+            Assert.IsFalse(success);
+        }
+        
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
+        public void WhenReadDataAfterDeletingIt_TheReturnedBoolIsFalse_Test(IStorage storage)
+        {
+            // arrange
+            var profile = "profile";
+            var key = "key";
+            var data = Encoding.UTF8.GetBytes("Data");
+            
+            // act
+            TestsUtils.RunAsyncMethodSync(storage.Write(profile, key, data));
+            TestsUtils.RunAsyncMethodSync(storage.Delete(profile, key));
+            var (success, result) = TestsUtils.RunAsyncMethodSync(storage.Read(profile, key));
+            
+            // assert
+            Assert.AreEqual(false, success);
+        }
+    }
+}

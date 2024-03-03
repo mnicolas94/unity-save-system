@@ -12,11 +12,10 @@ namespace SaveSystem.Tests.Runtime
     public class PerformanceTests
     {
         [Performance]
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
-        public void Serialization_PerformanceTest(string serializerKey)
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
+        public void Serialization_PerformanceTest(ISerializer serializer)
         {
             // arrange
-            var serializer = TestsUtils.Serializers[serializerKey];
             var obj = ScriptableObject.CreateInstance<SmallPersistentObject>();
             obj.Init();
 
@@ -24,11 +23,10 @@ namespace SaveSystem.Tests.Runtime
         }
         
         [Performance]
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
-        public void SerializationLargeObject_PerformanceTest(string serializerKey)
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
+        public void SerializationLargeObject_PerformanceTest(ISerializer serializer)
         {
             // arrange
-            var serializer = TestsUtils.Serializers[serializerKey];
             var obj = ScriptableObject.CreateInstance<LargePersistentObject>();
             obj.Init();
 

@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SaveSystem
+namespace SaveSystem.Utilities
 {
     public static class DesEncryption
     {

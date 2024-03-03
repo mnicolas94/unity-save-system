@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SaveSystem.GuidsResolve;
 using UnityEngine;
 
@@ -53,6 +52,11 @@ namespace SaveSystem.Serializers
             {
                 UnityJsonSerializer.Deserialize(data, obj, guidsResolver);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(UnitySerializer)}-{_mode}";
         }
     }
 }

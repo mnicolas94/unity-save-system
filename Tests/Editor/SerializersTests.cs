@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using SaveSystem.GuidsResolve;
+using SaveSystem.Serializers;
 using UnityEngine;
 using Utils.Serializables;
 using Object = UnityEngine.Object;
@@ -10,11 +11,10 @@ namespace SaveSystem.Tests.Editor
 {
     public class SerializersTests
     {
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
-        public void WhenSerializeAnObject_ItsDeserializationHasTheProperValues_Test(string serializerKey)
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
+        public void WhenSerializeAnObject_ItsDeserializationHasTheProperValues_Test(ISerializer serializer)
         {
             // arrange
-            var serializer = TestsUtils.Serializers[serializerKey];
             var expected = ScriptableObject.CreateInstance<PersistentObject>();
             expected.I = 42;
             expected.S = "Hello serializer";
@@ -33,11 +33,10 @@ namespace SaveSystem.Tests.Editor
             Assert.AreEqual(expected.Lb, deserialized.Lb);
         }
         
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
-        public void WhenSerializeAFieldThatDependsOnISerializationCallbackReceiverInterface_ItsDeserializationHasTheProperValues_Test(string serializerKey)
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
+        public void WhenSerializeAFieldThatDependsOnISerializationCallbackReceiverInterface_ItsDeserializationHasTheProperValues_Test(ISerializer serializer)
         {
             // arrange
-            var serializer = TestsUtils.Serializers[serializerKey];
             var expected = ScriptableObject.CreateInstance<PersistentObject>();
             expected.Dictionary = new SerializableDictionary<string, int>
             {
@@ -61,11 +60,10 @@ namespace SaveSystem.Tests.Editor
             }
         }
         
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
-        public void WhenSerializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
+        public void WhenSerializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(ISerializer serializer)
         {
             // arrange
-            var serializer = TestsUtils.Serializers[serializerKey];
             var data = ScriptableObject.CreateInstance<PersistentObject>();
             data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
             var guidResolver = new GuidsDatabase();
@@ -74,11 +72,10 @@ namespace SaveSystem.Tests.Editor
             Assert.Throws<ArgumentException>(() => serializer.Serialize(data, guidResolver));
         }
         
-        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.SerializersKeys))]
-        public void WhenDeserializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(string serializerKey)
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Serializers))]
+        public void WhenDeserializeAnObjectReferenceThatItsNotInGuidsDatabase_ThrowException_Test(ISerializer serializer)
         {
             // arrange
-            var serializer = TestsUtils.Serializers[serializerKey];
             var data = ScriptableObject.CreateInstance<PersistentObject>();
             data.Reference = ScriptableObject.CreateInstance<PersistentObject>();
             

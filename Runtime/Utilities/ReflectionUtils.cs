@@ -4,7 +4,7 @@ using System.Reflection;
 using SaveSystem.Attributes;
 using UnityEngine;
 
-namespace SaveSystem
+namespace SaveSystem.Utilities
 {
     public static class ReflectionUtils
     {

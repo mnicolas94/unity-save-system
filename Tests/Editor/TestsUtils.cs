@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,23 +11,21 @@ namespace SaveSystem.Tests.Editor
 {
     public static class TestsUtils
     {
-        public static readonly Dictionary<string, ISerializer> Serializers = new Dictionary<string, ISerializer>
+        public static readonly List<ISerializer> Serializers = new()
         {
-            { "UnitySerializerBinary", new UnitySerializer(SerializationMode.Binary) },
-            { "UnitySerializerJson", new UnitySerializer(SerializationMode.Json) },
+            new UnitySerializer(SerializationMode.Binary),
+            new UnitySerializer(SerializationMode.Json),
         };
         
-        public static readonly Dictionary<string, IGuidResolver> GuidsResolvers = new Dictionary<string, IGuidResolver>
+        public static readonly List<IGuidResolver> GuidsResolvers = new()
         {
-            { "GuidsDatabase", new GuidsDatabase() },
+            new GuidsDatabase(),
         };
         
-        public static readonly Dictionary<string, IStorage> Storages = new Dictionary<string, IStorage>
+        public static readonly List<IStorage> Storages = new()
         {
-            { "storage-files", new FilesStorage() },
+            new FilesStorage()
         };
-
-        public static List<string> SerializersKeys => Serializers.Keys.ToList();
         
         public static IEnumerator RunTaskAsCoroutine(Task task)
         {
@@ -34,6 +33,16 @@ namespace SaveSystem.Tests.Editor
             {
                 yield return null;
             }
+        }
+        
+        public static T RunAsyncMethodSync<T>(Task<T> task)
+        {
+            return Task.Run(async () => await task).GetAwaiter().GetResult();
+        }
+        
+        public static void RunAsyncMethodSync(Task task)
+        {
+            Task.Run(async () => await task).GetAwaiter().GetResult();
         }
     }
 }

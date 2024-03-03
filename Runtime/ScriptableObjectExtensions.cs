@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SaveSystem
 {
-    public static class Persistent
+    public static class ScriptableObjectExtensions
     {
         public static async Task Save(this ScriptableObject obj)
         {

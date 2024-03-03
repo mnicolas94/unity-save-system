@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using SaveSystem.GuidsResolve;
+using SaveSystem.Utilities;
 using UnityEngine;
 
 namespace SaveSystem
@@ -104,12 +104,10 @@ namespace SaveSystem
                 receiverBefore.OnBeforeSave(guidResolver);
             }
             
-            var filePath = GetPersistentPath(obj);
-            var file = File.Open(filePath, FileMode.Create);
-        
+            // serialize object
             var serializer = SaveSystemSettings.Instance.Serializer;
-
             byte[] data;
+            
             if (obj is IPersistentCustomSerializable customSerializable)
             {
                 data = customSerializable.WriteData(guidResolver);
@@ -119,14 +117,18 @@ namespace SaveSystem
                 data = serializer.Serialize(obj, guidResolver);
             }
             
+            // get save metadata and encrypt data
             var version = Application.version;
             var deviceId = SystemInfo.deviceUniqueIdentifier;
+            var checksum = GenerateMd5(data);
             var encryptedData = SaveSystemSettings.Instance.EncryptData
                 ? DesEncryption.Encrypt(data, Pass)
                 : data;
-            var checksum = GenerateMd5(data);
-        
-            using var writer = new BinaryWriter(file);
+
+            // write in storage
+            var filePath = GetPersistentPath(obj);
+            var file = File.Open(filePath, FileMode.Create);
+            await using var writer = new BinaryWriter(file);
             writer.Write(version);
             writer.Write(deviceId);
             writer.Write(checksum.Length);
@@ -166,7 +168,7 @@ namespace SaveSystem
                     return report;
                 }
 
-                // read file and fill report
+                // read from storage and fill report
                 var file = File.OpenRead(filePath);
                 using var reader = new BinaryReader(file);
                 var version = reader.ReadString();
