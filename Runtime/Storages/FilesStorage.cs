@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 namespace SaveSystem.Storages
 {
-    [AddTypeMenu("MultipleFiles")]
     [Serializable]
+    [AddTypeMenu("MultipleFiles")]
     public class FilesStorage : IStorage, IStorageStream
     {
         [SerializeField] private string _fileExtension = "dat";

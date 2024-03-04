@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace SaveSystem.Storages
 {
+    [Serializable]
+    [AddTypeMenu("Player Prefs")]
     public class PlayerPrefsStorage : IStorage
     {
         private string GetPlayerPrefsKey(string profile, string key)
