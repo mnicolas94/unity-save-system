@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d6fc6f654dd5749a20c09a3cc606f8, type: 3}
   m_Name: SaveSettings
   m_EditorClassIdentifier: 
+  _storage:
+    rid: 231199910836830208
   _serializer:
     rid: 2350179849866838017
   _encryptData: 0
@@ -34,6 +36,10 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 231199910836830208
+      type: {class: FilesStorage, ns: SaveSystem.Storages, asm: com.facticus.savesystem}
+      data:
+        _fileExtension: dat
     - rid: 2350179849866838017
       type: {class: UnitySerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
       data:

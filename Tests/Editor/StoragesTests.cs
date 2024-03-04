@@ -72,7 +72,7 @@ namespace SaveSystem.Tests.Editor
         }
         
         [UnityTest, TestCaseSource(nameof(Storages))]
-        public IEnumerator w(IStorage storage)
+        public IEnumerator IStorage_ExistsData_Test(IStorage storage)
         {
             // arrange
             var profile = "profile";

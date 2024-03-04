@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using SaveSystem.Storages;
 using SaveSystem.Utilities;
 using UnityEngine;
 
@@ -48,17 +50,17 @@ namespace SaveSystem
             public override string ToString()
             {
                 return $"LoadReport\n" +
-                       $"\tSuccess: {Success}\n" +
+                       $"\tSuccess: {Success.ToString()}\n" +
                        $"\tFailureReason: {FailureReason}\n" +
                        $"\tFilePath: {FilePath}\n" +
                        $"\tVersion: {Version}\n" +
                        $"\tDeviceId: {DeviceId}\n" +
                        $"\tChecksum: {Checksum}\n" +
                        $"\tJson: {Data}\n" +
-                       $"\tFileExisted: {FileExisted}\n" +
-                       $"\tDifferentVersion: {DifferentVersion}\n" +
-                       $"\tDifferentDevice: {DifferentDevice}\n" +
-                       $"\tDifferentChecksum: {DifferentChecksum}";
+                       $"\tFileExisted: {FileExisted.ToString()}\n" +
+                       $"\tDifferentVersion: {DifferentVersion.ToString()}\n" +
+                       $"\tDifferentDevice: {DifferentDevice.ToString()}\n" +
+                       $"\tDifferentChecksum: {DifferentChecksum.ToString()}";
             }
         }
         
@@ -114,19 +116,33 @@ namespace SaveSystem
                 : data;
 
             // write in storage
-            await using var memoryStream = new MemoryStream();
-            await using var writer = new BinaryWriter(memoryStream);
+            var storage = saveSystemSettings.Storage;
+            var guid = guidResolver.GetGuid(obj);
+            var profile = GetProfile();
+            
+            Stream stream;
+            if (storage is IStorageStream storageStream)
+            {
+                stream = storageStream.GetStreamToWrite(profile, guid);
+            }
+            else
+            {
+                stream = new MemoryStream();
+            }
+            
+            await using var writer = new BinaryWriter(stream);
             writer.Write(version);
             writer.Write(deviceId);
             writer.Write(checksum.Length);
             writer.Write(checksum);
             writer.Write(encryptedData.Length);
             writer.Write(encryptedData);
-            
-            var storage = saveSystemSettings.Storage;
-            var guid = guidResolver.GetGuid(obj);
-            var profile = GetProfile();
-            await storage.Write(profile, guid, memoryStream.ToArray());
+
+            if (storage is not IStorageStream)
+            {
+                var memoryStream = (MemoryStream)stream;
+                await storage.Write(profile, guid, memoryStream.ToArray());
+            }
             
             // DebugLog($"- SaveUtils.SaveObject: saving to {filePath}");
             
@@ -154,10 +170,22 @@ namespace SaveSystem
                 var storage = saveSystemSettings.Storage;
                 var guidResolver = saveSystemSettings.GuidsResolver;
 
+                // read data from storage
                 var profile = GetProfile();
                 var guid = guidResolver.GetGuid(obj);
-                var (success, storageData) = await storage.Read(profile, guid);
-
+                bool success;
+                Stream stream;
+                if (storage is IStorageStream storageStream)
+                {
+                    success = storageStream.TryGetStreamToRead(profile, guid, out stream);
+                }
+                else
+                {
+                    var (readSuccess, storageData) = await storage.Read(profile, guid);
+                    success = readSuccess;
+                    stream = new MemoryStream(storageData);
+                }
+                
                 if(!success)
                 {
                     report.Success = false;
@@ -167,8 +195,7 @@ namespace SaveSystem
                 }
 
                 // read from storage and fill report
-                await using var memoryStream = new MemoryStream(storageData);
-                using var reader = new BinaryReader(memoryStream);
+                using var reader = new BinaryReader(stream);
                 var version = reader.ReadString();
                 var deviceId = reader.ReadString();
                 int checksumLength = reader.ReadInt32();

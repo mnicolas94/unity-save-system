@@ -7,7 +7,7 @@ namespace SaveSystem.Storages
 {
     [AddTypeMenu("MultipleFiles")]
     [Serializable]
-    public class FilesStorage : IStorage
+    public class FilesStorage : IStorage, IStorageStream
     {
         [SerializeField] private string _fileExtension = "dat";
 
@@ -56,6 +56,26 @@ namespace SaveSystem.Storages
             var filePath = Path.Combine(Application.persistentDataPath, $"{key}.{_fileExtension}");
 #endif
             return filePath;
+        }
+
+        public bool TryGetStreamToRead(string profile, string key, out Stream stream)
+        {
+            var filePath = GetFilePath(profile, key);
+            if (File.Exists(filePath))
+            {
+                stream = File.OpenRead(filePath);
+                return true;
+            }
+
+            stream = null;
+            return false;
+        }
+
+        public Stream GetStreamToWrite(string profile, string key)
+        {
+            var filePath = GetFilePath(profile, key);
+            var file = File.Open(filePath, FileMode.Create);
+            return file;
         }
     }
 }

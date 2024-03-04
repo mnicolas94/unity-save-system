@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using NUnit.Framework;
 using SaveSystem.Serializers;
+using SaveSystem.Storages;
 using SaveSystem.Tests.Editor;
 using Unity.PerformanceTesting;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 namespace SaveSystem.Tests.Runtime
@@ -32,6 +36,87 @@ namespace SaveSystem.Tests.Runtime
 
             // act
             TestSerialization(serializer, obj, x => x.Randomize());
+        }
+        
+        [Performance]
+        [Test]
+        public void IStorageVsIStorageStream_PerformanceTest()
+        {
+            var storage = new FilesStorage();
+            var profile = "profile";
+            var dataKey = "key";
+
+            // create large data
+            var obj = ScriptableObject.CreateInstance<LargePersistentObject>();
+            obj.Init();
+            var json = JsonUtility.ToJson(obj);
+            var data = Encoding.UTF8.GetBytes(json);
+
+            async void TestWrite()
+            {
+                using var memoryStream = new MemoryStream();
+                using var writer = new BinaryWriter(memoryStream);
+                writer.Write(data.Length);
+                writer.Write(data);
+                
+                await storage.Write(profile, dataKey, memoryStream.ToArray());
+            }
+            
+            async void TestWriteWithStream()
+            {
+                var stream = storage.GetStreamToWrite(profile, dataKey);
+                await using var writer = new BinaryWriter(stream);
+                writer.Write(data.Length);
+                writer.Write(data);
+            }
+            
+            async void TestRead()
+            {
+                var (success, data ) = await storage.Read(profile, dataKey);
+                using var memoryStream = new MemoryStream(data);
+                using var reader = new BinaryReader(memoryStream);
+                var length = reader.ReadInt32();
+                var bytes = reader.ReadBytes(length);
+            }
+            
+            async void TestReadWithStream()
+            {
+                var success = storage.TryGetStreamToRead(profile, dataKey, out var stream);
+                using var reader = new BinaryReader(stream);
+                var length = reader.ReadInt32();
+                var bytes = reader.ReadBytes(length);
+            }
+
+            var name = "Memory Stream";
+            Profiler.BeginSample(name);
+            Measure.Method(TestWrite)
+                .SampleGroup(name)
+                .WarmupCount(10).MeasurementCount(10).DynamicMeasurementCount().IterationsPerMeasurement(5).Run();
+            Profiler.EndSample();
+
+            name = "Storage Stream";
+            Profiler.BeginSample(name);
+            Measure.Method(TestWriteWithStream)
+                .SampleGroup(name)
+                .WarmupCount(10).MeasurementCount(10).DynamicMeasurementCount().IterationsPerMeasurement(5).Run();
+            Profiler.EndSample();
+            
+            name = "Memory Stream Read";
+            Profiler.BeginSample(name);
+            Measure.Method(TestRead)
+                .SampleGroup(name)
+                .WarmupCount(10).MeasurementCount(10).DynamicMeasurementCount().IterationsPerMeasurement(5).Run();
+            Profiler.EndSample();
+            
+            name = "Storage Stream Read";
+            Profiler.BeginSample(name);
+            Measure.Method(TestReadWithStream)
+                .SampleGroup(name)
+                .WarmupCount(10).MeasurementCount(10).DynamicMeasurementCount().IterationsPerMeasurement(5).Run();
+            Profiler.EndSample();
+            
+            // tear down
+            storage.Delete(profile, dataKey);
         }
 
         private void TestSerialization<T>(ISerializer serializer, T obj,
