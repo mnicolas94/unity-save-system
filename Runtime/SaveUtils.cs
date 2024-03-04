@@ -186,6 +186,7 @@ namespace SaveSystem
                     stream = new MemoryStream(storageData);
                 }
                 
+                // return if storage couldn't read data
                 if(!success)
                 {
                     report.Success = false;
@@ -194,7 +195,7 @@ namespace SaveSystem
                     return report;
                 }
 
-                // read from storage and fill report
+                // read data from storage
                 using var reader = new BinaryReader(stream);
                 var version = reader.ReadString();
                 var deviceId = reader.ReadString();
@@ -203,12 +204,14 @@ namespace SaveSystem
                 int dataLength = reader.ReadInt32();
                 var data = reader.ReadBytes(dataLength);
 
+                // decrypt data if encrypted
                 byte[] decryptedData;
                 if (saveSystemSettings.EncryptData)
                     DesEncryption.TryDecrypt(data, Pass, out decryptedData);
                 else
                     decryptedData = data;
 
+                // fill report
                 report.Success = true;
                 report.FileExisted = true;
                 report.Version = version;
@@ -220,7 +223,6 @@ namespace SaveSystem
 
                 // deserialize data
                 var serializer = saveSystemSettings.Serializer;
-            
                 if (obj is IPersistentCustomSerializable customSerializable)
                 {
                     customSerializable.ReadData(decryptedData, guidResolver);
