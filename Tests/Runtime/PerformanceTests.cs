@@ -118,6 +118,45 @@ namespace SaveSystem.Tests.Runtime
             // tear down
             storage.Delete(profile, dataKey);
         }
+        
+        [Performance]
+        [TestCaseSource(typeof(TestsUtils), nameof(TestsUtils.Storages))]
+        public void Storages_PerformanceTest(IStorage storage)
+        {
+            var profile = "profile";
+            var dataKey = "key";
+
+            // create large data
+            var obj = ScriptableObject.CreateInstance<LargePersistentObject>();
+            obj.Init();
+            var json = JsonUtility.ToJson(obj);
+            var data = Encoding.UTF8.GetBytes(json);
+
+            async void TestWrite()
+            {
+                await storage.Write(profile, dataKey, data);
+            }
+            
+            async void TestRead()
+            {
+                var result = await storage.Read(profile, dataKey);
+            }
+
+            var name = $"Storage write - {storage}";
+            Profiler.BeginSample(name);
+            Measure.Method(TestWrite)
+                .WarmupCount(10).MeasurementCount(10).DynamicMeasurementCount().IterationsPerMeasurement(5).Run();
+            Profiler.EndSample();
+
+            name = $"Storage read - {storage}";
+            Profiler.BeginSample(name);
+            Measure.Method(TestRead)
+                .WarmupCount(10).MeasurementCount(10).DynamicMeasurementCount().IterationsPerMeasurement(5).Run();
+            Profiler.EndSample();
+            
+            // tear down
+            storage.Delete(profile, dataKey);
+        }
 
         private void TestSerialization<T>(ISerializer serializer, T obj,
             Action<T> randomizeFunction) where T : ScriptableObject

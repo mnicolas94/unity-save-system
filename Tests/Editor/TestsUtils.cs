@@ -24,7 +24,8 @@ namespace SaveSystem.Tests.Editor
         
         public static readonly List<IStorage> Storages = new()
         {
-            new FilesStorage()
+            new FilesStorage(),
+            new PlayerPrefsStorage(),
         };
         
         public static IEnumerator RunTaskAsCoroutine(Task task)
