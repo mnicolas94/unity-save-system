@@ -14,6 +14,25 @@ namespace SaveSystem
         [SerializeReference, SubclassSelector] private IStorage _storage = new FilesStorage();
         public IStorage Storage => _storage;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [SerializeField, Tooltip("A profile allows to isolate contexts to save/load data. e.g. it can be used to " +
+                                 "implement saves slots. It is also used to isolate saves in the editor from saves " +
+                                 "in standalone builds. It wil be used to implement a backup profile in the future.")]
+        private string _profile;
+        public string Profile
+        {
+            get => _profile;
+            set => _profile = value;
+        }
+
+        public static string SaveProfile
+        {
+            get => Instance.Profile;
+            set => Instance.Profile = value;
+        }
+
         [Header("Serialization")]
         [SerializeReference, SubclassSelector] private ISerializer _serializer;
         public ISerializer Serializer => _serializer;

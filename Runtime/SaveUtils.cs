@@ -64,9 +64,12 @@ namespace SaveSystem
             }
         }
         
-        public static string GetProfile()
+        public static string GetEditorAwareProfile()
         {
-            return "profile";  // TODO get proper profile
+#if UNITY_EDITOR
+            return "editor";
+#endif
+            return SaveSystemSettings.SaveProfile;
         }
 
         public static void ResetPersistentObject(ScriptableObject obj)
@@ -118,7 +121,7 @@ namespace SaveSystem
             // write in storage
             var storage = saveSystemSettings.Storage;
             var guid = guidResolver.GetGuid(obj);
-            var profile = GetProfile();
+            var profile = GetEditorAwareProfile();
             
             Stream stream;
             if (storage is IStorageStream storageStream)
@@ -171,7 +174,7 @@ namespace SaveSystem
                 var guidResolver = saveSystemSettings.GuidsResolver;
 
                 // read data from storage
-                var profile = GetProfile();
+                var profile = GetEditorAwareProfile();
                 var guid = guidResolver.GetGuid(obj);
                 bool success;
                 Stream stream;

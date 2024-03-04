@@ -53,7 +53,7 @@ namespace SaveSystem.Editor
             var saveSystemSettings = SaveSystemSettings.Instance;
             var storage = saveSystemSettings.Storage;
             var guidResolver = saveSystemSettings.GuidsResolver;
-            var profile = SaveUtils.GetProfile();
+            var profile = SaveUtils.GetEditorAwareProfile();
             
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
             foreach (var obj in selected)
@@ -78,7 +78,7 @@ namespace SaveSystem.Editor
             var saveSystemSettings = SaveSystemSettings.Instance;
             var storage = saveSystemSettings.Storage;
             var guidResolver = saveSystemSettings.GuidsResolver;
-            var profile = SaveUtils.GetProfile();
+            var profile = SaveUtils.GetEditorAwareProfile();
             
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets)[0];
             var guid = guidResolver.GetGuid(selected);

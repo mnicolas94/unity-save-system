@@ -36,7 +36,7 @@ namespace SaveSystem
             var storage = saveSystemSettings.Storage;
             var guidResolver = saveSystemSettings.GuidsResolver;
 
-            var profile = SaveUtils.GetProfile();
+            var profile = SaveUtils.GetEditorAwareProfile();
             var guid = guidResolver.GetGuid(obj);
             var exists = await storage.ExistsData(profile, guid);
             return exists;

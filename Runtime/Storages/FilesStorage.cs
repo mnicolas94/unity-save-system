@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 namespace SaveSystem.Storages
@@ -50,12 +51,14 @@ namespace SaveSystem.Storages
 
         public string GetFilePath(string profile, string key)
         {
-#if UNITY_EDITOR
-            var filePath = Path.Combine(Application.persistentDataPath, $"editor-{key}.{_fileExtension}");
-#else
-            var filePath = Path.Combine(Application.persistentDataPath, $"{key}.{_fileExtension}");
-#endif
-            return filePath;
+            if (string.IsNullOrEmpty(profile))
+            {
+                return Path.Combine(Application.persistentDataPath, $"{key}.{_fileExtension}");
+            }
+            else
+            {
+                return Path.Combine(Application.persistentDataPath, $"{profile}-{key}.{_fileExtension}");
+            }
         }
 
         public bool TryGetStreamToRead(string profile, string key, out Stream stream)

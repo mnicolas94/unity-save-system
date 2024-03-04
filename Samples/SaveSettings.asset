@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _storage:
     rid: 231199910836830208
+  _profile: 
   _serializer:
     rid: 2350179849866838017
   _encryptData: 0
