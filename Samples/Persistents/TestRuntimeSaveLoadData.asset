@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65a147250e85407fba07bbb38b1d6d9e, type: 3}
   m_Name: TestRuntimeSaveLoadData
   m_EditorClassIdentifier: 
-  IntField: 0
-  StringField: 
-  FloatField: 0
+  IntField: 1
+  StringField: 2
+  FloatField: 3
   BoolField: 0
-  Position: {x: 0, y: 0, z: 0}
+  Position: {x: 4, y: 0.5, z: 6}

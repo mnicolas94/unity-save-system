@@ -70,5 +70,32 @@ namespace SaveSystem.Tests.Editor
             // assert
             Assert.IsFalse(success);
         }
+        
+        [UnityTest, TestCaseSource(nameof(Storages))]
+        public IEnumerator w(IStorage storage)
+        {
+            // arrange
+            var profile = "profile";
+            var key = "key";
+            var data = Encoding.UTF8.GetBytes("Data");
+            
+            // act
+            var writeTask = storage.Write(profile, key, data);
+            var existsDataTask = storage.ExistsData(profile, key);
+            var delete = storage.Delete(profile, key);
+            
+            // assert exists
+            yield return TestsUtils.RunTaskAsCoroutine(writeTask);
+            yield return TestsUtils.RunTaskAsCoroutine(existsDataTask);
+            var exists = existsDataTask.Result;
+            Assert.IsTrue(exists);
+            
+            // assert does not exist
+            yield return TestsUtils.RunTaskAsCoroutine(delete);
+            existsDataTask = storage.ExistsData(profile, key);
+            yield return TestsUtils.RunTaskAsCoroutine(existsDataTask);
+            exists = existsDataTask.Result;
+            Assert.IsFalse(exists);
+        }
     }
 }
