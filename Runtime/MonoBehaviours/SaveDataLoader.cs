@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using SaveSystem.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -46,6 +47,10 @@ namespace SaveSystem
                     break;
                 
                 var persistent = _data[i];
+                if (persistent is SaveGroup group)
+                {
+                    await group.LoadOrCreate();
+                }
                 await persistent.LoadOrCreate();
                 
                 float progress = loadPersistentsProgress + (float)(i + 1) / count * (1 - loadPersistentsProgress);
