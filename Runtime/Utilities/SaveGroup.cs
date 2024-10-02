@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SaveSystem.Utilities
 {
-    [CreateAssetMenu(fileName = "SaveGroup", menuName = "Facticus/SaveSystem/SaveGroup", order = 0)]
+    [CreateAssetMenu(fileName = "SaveGroup", menuName = "Facticus/Save System/SaveGroup", order = 0)]
     public class SaveGroup : ScriptableObject
     {
         [SerializeField, DoNotPersist] private List<ScriptableObject> _objects;
