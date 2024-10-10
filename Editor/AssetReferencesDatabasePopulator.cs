@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SaveSystem.GuidsResolve;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-using Object = UnityEngine.Object;
 
 namespace SaveSystem.Editor
 {
@@ -24,7 +19,7 @@ namespace SaveSystem.Editor
         [MenuItem("Tools/Facticus/Save System/Populate guids database")]
         public static void PopulateDatabase()
         {
-            var objectsGuids = SaveDataEditorUtils.GetDataObjectsAndGuids();
+            var objectsGuids = AssetReferencesScanUtils.GetDataObjectsAndGuids();
             var saveSystemSettings = SaveSystemSettings.Instance;
             saveSystemSettings.GuidsResolver.PopulateDatabase(objectsGuids);
             EditorUtility.SetDirty(saveSystemSettings);
@@ -36,6 +31,26 @@ namespace SaveSystem.Editor
             catch
             {
                 // ignore
+            }
+        }
+    }
+    
+    [InitializeOnLoad]
+    public static class DatabasePopulatorOnPlay
+    {
+        // register an event handler when the class is initialized
+        static DatabasePopulatorOnPlay()
+        {
+            EditorApplication.playModeStateChanged += LogPlayModeState;
+        }
+
+        private static void LogPlayModeState(PlayModeStateChange state)
+        {
+            var aboutToEnterPlayMode = state == PlayModeStateChange.ExitingEditMode;
+            var populateOnPlayMode = SaveSystemSettings.Instance.PopulateDatabaseBeforeEnterPlayMode;
+            if (aboutToEnterPlayMode && populateOnPlayMode)
+            {
+                AssetReferencesDatabasePopulator.PopulateDatabase();
             }
         }
     }

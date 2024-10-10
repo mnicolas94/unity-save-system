@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using SaveSystem.Storages;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace SaveSystem.Editor
 {
-    public static class SaveDataEditorUtils
+    public static class SaveSystemMenuItems
     {
         [MenuItem("Assets/Facticus/SaveSystem/Save", false, 0)]
         [MenuItem("CONTEXT/ScriptableObject/Save", false, 100)]
@@ -109,63 +105,6 @@ namespace SaveSystem.Editor
         {
             var selected = Selection.GetFiltered<ScriptableObject>(SelectionMode.Assets);
             return selected.Length == 1;
-        }
-        
-        public static List<(Object obj, string guid)> GetDataObjectsAndGuids()
-        {
-            // get assets
-            var searchPaths = SaveSystemSettings.Instance.SearchDatabaseAssetsInPaths;
-            var filesGuids = GetFilesGuids(searchPaths);
-
-            // ignore assets
-            var ignorePaths = SaveSystemSettings.Instance.IgnoreDatabaseAssetsInPaths;
-            var ignoreGuids = GetFilesGuids(ignorePaths);
-            filesGuids.RemoveAll(guid => ignoreGuids.Contains(guid));
-
-            // get objects
-            var objectsGuids = filesGuids.SelectMany(guid =>
-            {
-                string objPath = AssetDatabase.GUIDToAssetPath(guid);
-                var isSceneAsset = AssetDatabase.GetMainAssetTypeAtPath(objPath) == typeof(SceneAsset);
-                if (isSceneAsset)
-                {
-                    var obj = AssetDatabase.LoadAssetAtPath<Object>(objPath);
-                    return new[] { (obj, guid) };
-                }
-                else
-                {
-                    var objects = AssetDatabase.LoadAllAssetsAtPath(objPath);
-                    var objectsGuids = objects.Select(obj =>
-                    {
-                        var isMain = AssetDatabase.IsMainAsset(obj);
-                        AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out var g, out long localFileId);
-                        var databaseId = isMain ? guid : $"{guid}---{localFileId}";
-                        return (obj, databaseId);
-                    });
-
-                    return objectsGuids;
-                }
-            });
-            return objectsGuids.ToList();
-        }
-        
-        private static List<string> GetFilesGuids(List<string> paths)
-        {
-            var folders = paths.Where(AssetDatabase.IsValidFolder).ToArray();
-            var files = paths.Where(path => !AssetDatabase.IsValidFolder(path));
-
-            var guids = folders.Length > 0
-                ? AssetDatabase.FindAssets("", folders)
-                : Array.Empty<string>();
-            var filesGuids = guids.Where(guid =>
-            {
-                string objPath = AssetDatabase.GUIDToAssetPath(guid);
-                bool isFolder = AssetDatabase.IsValidFolder(objPath);
-                return !isFolder;
-            });
-            var additionalFilesGuids = files.Select(AssetDatabase.AssetPathToGUID);
-            filesGuids = filesGuids.Concat(additionalFilesGuids);
-            return filesGuids.ToList();
         }
     }
 }
