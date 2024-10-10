@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace SaveSystem.Editor
@@ -27,14 +28,24 @@ namespace SaveSystem.Editor
                 };
                 
                 var isSceneAsset = assetType == typeof(SceneAsset);
-                var isPrefab = objPath.EndsWith(".prefab");
-                if (isSceneAsset || isPrefab)
+                if (isSceneAsset)
                 {
                     return objectsGuids;
                 }
                 else
                 {
-                    var subAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(objPath);
+                    var subAssetsArray = AssetDatabase.LoadAllAssetRepresentationsAtPath(objPath);
+                    var subAssets = new List<Object>(subAssetsArray);
+                    
+                    // also save top-level components in prefabs
+                    var isPrefab = objPath.EndsWith(".prefab");
+                    if (isPrefab && obj is GameObject go)
+                    {
+                        var components = go.GetComponents<Object>();
+                        subAssets.AddRange(components);
+                    }
+                    
+                    // save sub-assets with their local file id
                     foreach (var subAsset in subAssets)
                     {
                         AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out _, out long localFileId);
