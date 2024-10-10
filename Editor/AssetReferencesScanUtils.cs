@@ -41,7 +41,7 @@ namespace SaveSystem.Editor
                     var isPrefab = objPath.EndsWith(".prefab");
                     if (isPrefab && obj is GameObject go)
                     {
-                        var components = go.GetComponents<Object>();
+                        var components = go.GetComponents<Component>();
                         subAssets.AddRange(components);
                     }
                     
