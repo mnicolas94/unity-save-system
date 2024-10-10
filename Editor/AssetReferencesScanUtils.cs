@@ -34,25 +34,33 @@ namespace SaveSystem.Editor
                 }
                 else
                 {
-                    var subAssetsArray = AssetDatabase.LoadAllAssetRepresentationsAtPath(objPath);
-                    var subAssets = new List<Object>(subAssetsArray);
+                    var localIds = new List<(Object, string)>();
+                    var subAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(objPath);
                     
-                    // also save top-level components in prefabs
-                    var isPrefab = objPath.EndsWith(".prefab");
-                    if (isPrefab && obj is GameObject go)
-                    {
-                        var components = go.GetComponents<Component>();
-                        subAssets.AddRange(components);
-                    }
-                    
-                    // save sub-assets with their local file id
+                    // get sub-assets' local file ids
                     foreach (var subAsset in subAssets)
                     {
                         AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out _, out long localFileId);
-                        var databaseId = string.Concat(guid, "---", localFileId.ToString());
+                        localIds.Add((subAsset, localFileId.ToString()));
+                    }
+                    
+                    // if is prefab, get components' local ids
+                    if (obj is GameObject go && PrefabUtility.IsOutermostPrefabInstanceRoot(go))
+                    {
+                        var components = go.GetComponents<Component>();
+                        foreach (var component in components)
+                        {
+                            var localId = GlobalObjectId.GetGlobalObjectIdSlow(component).targetObjectId;
+                            localIds.Add((component, localId.ToString()));
+                        }
+                    }
+                    
+                    foreach (var (subAsset, localId) in localIds)
+                    {
+                        var databaseId = string.Concat(guid, "---", localId);
                         objectsGuids.Add((subAsset, databaseId));
                     }
-
+                    
                     return objectsGuids;
                 }
             });
