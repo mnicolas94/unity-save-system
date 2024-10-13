@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using SaveSystem.GuidsResolve;
 using SaveSystem.Serializers;
 using UnityEngine;
 using Utils.Serializables;
-using Object = UnityEngine.Object;
 
 namespace SaveSystem.Tests.Editor
 {

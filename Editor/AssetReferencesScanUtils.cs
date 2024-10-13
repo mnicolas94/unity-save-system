@@ -16,55 +16,54 @@ namespace SaveSystem.Editor
                 SaveSystemSettings.Instance.IgnoreDatabaseAssetsInPaths
             );
 
-            // get objects
-            var objectsGuids = filesGuids.SelectMany(guid =>
+            var objectsGuids = new List<(Object, string)>();
+
+            // get also sub-assets
+            foreach (var guid in filesGuids)
             {
                 string objPath = AssetDatabase.GUIDToAssetPath(guid);
-                var assetType = AssetDatabase.GetMainAssetTypeAtPath(objPath);
                 var obj = AssetDatabase.LoadAssetAtPath<Object>(objPath);
-                var objectsGuids = new List<(Object, string)>
+                objectsGuids.Add((obj, guid));
+                AddSubAssets(obj, guid, objectsGuids);
+            }
+            
+            return objectsGuids;
+        }
+
+        public static void AddSubAssets(Object obj, string guid, List<(Object, string)> objectsGuids)
+        {
+            string objPath = AssetDatabase.GUIDToAssetPath(guid);
+            var assetType = AssetDatabase.GetMainAssetTypeAtPath(objPath);
+
+            var isSceneAsset = assetType == typeof(SceneAsset); // ignore scenes' sub-assets
+            if (!isSceneAsset)
+            {
+                // add sub-assets representations (the ones seen as files in the Project window)
+                var subAssetsArray = AssetDatabase.LoadAllAssetRepresentationsAtPath(objPath);
+                foreach (var subAsset in subAssetsArray)
                 {
-                    (obj, guid)
-                };
+                    var databaseId = GetSubAssetGuid(guid, subAsset);
+                    objectsGuids.Add((subAsset, databaseId));
+                }
                 
-                var isSceneAsset = assetType == typeof(SceneAsset);
-                if (isSceneAsset)
+                // add top-level components if it's a prefab
+                if (obj is GameObject go && PrefabUtility.IsPartOfPrefabAsset(go))
                 {
-                    return objectsGuids;
+                    var components = go.GetComponents<Component>();
+                    foreach (var component in components)
+                    {
+                        var databaseId = GetSubAssetGuid(guid, component);
+                        objectsGuids.Add((component, databaseId));
+                    }
                 }
-                else
-                {
-                    var localIds = new List<(Object, string)>();
-                    var subAssets = AssetDatabase.LoadAllAssetRepresentationsAtPath(objPath);
-                    
-                    // get sub-assets' local file ids
-                    foreach (var subAsset in subAssets)
-                    {
-                        AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out _, out long localFileId);
-                        localIds.Add((subAsset, localFileId.ToString()));
-                    }
-                    
-                    // if is prefab, get components' local ids
-                    if (obj is GameObject go && PrefabUtility.IsOutermostPrefabInstanceRoot(go))
-                    {
-                        var components = go.GetComponents<Component>();
-                        foreach (var component in components)
-                        {
-                            var localId = GlobalObjectId.GetGlobalObjectIdSlow(component).targetObjectId;
-                            localIds.Add((component, localId.ToString()));
-                        }
-                    }
-                    
-                    foreach (var (subAsset, localId) in localIds)
-                    {
-                        var databaseId = string.Concat(guid, "---", localId);
-                        objectsGuids.Add((subAsset, databaseId));
-                    }
-                    
-                    return objectsGuids;
-                }
-            });
-            return objectsGuids.ToList();
+            }
+        }
+
+        private static string GetSubAssetGuid(string guid, Object subAsset)
+        {
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(subAsset, out _, out long localFileId);
+            var databaseId = string.Concat(guid, "---", localFileId.ToString());
+            return databaseId;
         }
 
         public static List<string> GetGuidsInPaths(List<string> searchPaths, List<string> ignorePaths)
@@ -97,6 +96,7 @@ namespace SaveSystem.Editor
             });
             var additionalFilesGuids = files.Select(AssetDatabase.AssetPathToGUID);
             filesGuids = filesGuids.Concat(additionalFilesGuids);
+            filesGuids = filesGuids.Where(guid => !string.IsNullOrEmpty(guid));  // filter out invalid guids
             return filesGuids.ToList();
         }
     }

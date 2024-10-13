@@ -9,12 +9,11 @@ namespace SaveSystem.Tests.Editor
     public class PersistAttributesTests
     {
         private static PersistentTest _data;
-        private const string Path = "Assets/SaveSystem/Tests/Editor/Data/PersistentTest.asset";
 
         [SetUp]
         public void SetUp()
         {
-            _data = AssetDatabase.LoadAssetAtPath<PersistentTest>(Path);
+            _data = TestsReferences.Instance.persistent;
         }
 
         [UnityTest]
