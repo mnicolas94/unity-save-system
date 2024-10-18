@@ -11,26 +11,15 @@ namespace SaveSystem.Editor
         [SettingsProvider]
         public static SettingsProvider GetSettingsProvider()
         {
-            bool existsSettings = SaveSystemSettings.Instance != null;
-            SerializedObject so = existsSettings ? new SerializedObject(SaveSystemSettings.Instance) : null;
-            var keywords = existsSettings ? SettingsProvider.GetSearchKeywordsFromSerializedObject(so) : new string[0];
+            var settings = SaveSystemSettings.Editor_GetOrCreate();
+            SerializedObject so = new SerializedObject(settings);
+            var keywords = SettingsProvider.GetSearchKeywordsFromSerializedObject(so);
             var provider = new SettingsProvider("Project/Facticus/Save system", SettingsScope.Project)
             {
                 guiHandler = (searchContext) =>
                 {
                     EditorGUILayout.Space(12);
-                    
-                    if (existsSettings)
-                        GUIUtils.DrawSerializedObject(so);
-                    else
-                    {
-                        var r = EditorGUILayout.GetControlRect();
-                        if (GUI.Button(r, "Create settings"))
-                        {
-                            var settings = ScriptableObject.CreateInstance<SaveSystemSettings>();
-                            AssetDatabase.CreateAsset(settings, "Assets/SaveSettings.asset");
-                        }
-                    }
+                    GUIUtils.DrawSerializedObject(so);
                 },
                 keywords = keywords
             };

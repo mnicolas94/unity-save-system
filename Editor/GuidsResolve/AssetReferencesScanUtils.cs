@@ -5,18 +5,20 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace SaveSystem.Editor
+namespace SaveSystem.Editor.GuidsResolve
 {
     public static class AssetReferencesScanUtils
     {
         public static List<(Object obj, string guid)> GetDataObjectsAndGuids()
         {
+            var storage = AssetReferencesFilterStorage.GetOrCreate();
+            var objectsGuids = storage.GetObjectsAndGuids();
+            return objectsGuids;
+            
             var filesGuids = GetGuidsInPaths(
                 SaveSystemSettings.Instance.SearchDatabaseAssetsInPaths,
                 SaveSystemSettings.Instance.IgnoreDatabaseAssetsInPaths
             );
-
-            var objectsGuids = new List<(Object, string)>();
 
             // get also sub-assets
             foreach (var guid in filesGuids)

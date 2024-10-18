@@ -2,6 +2,9 @@
 using SaveSystem.GuidsResolve;
 using SaveSystem.Serializers;
 using SaveSystem.Storages;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using Utils;
 
@@ -61,5 +64,21 @@ namespace SaveSystem
         [Header("Debug")]
         [SerializeField] private bool _debugLogging;
         public bool DebugLogging => _debugLogging;
+
+#if UNITY_EDITOR
+        public static SaveSystemSettings Editor_GetOrCreate()
+        {
+            if (Instance == null)
+            {
+                var settings = CreateInstance<SaveSystemSettings>();
+                var path = "Assets/SaveSettings.asset";
+                AssetDatabase.CreateAsset(settings, path);
+                Debug.Log($"Save System settings created at {path}", settings);
+            }
+
+            return Instance;
+        }
+        
+#endif
     }
 }

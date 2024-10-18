@@ -4,7 +4,7 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace SaveSystem.Editor
+namespace SaveSystem.Editor.GuidsResolve
 {
     public class AssetReferencesDatabasePopulator : IPreprocessBuildWithReport
     {
@@ -23,7 +23,7 @@ namespace SaveSystem.Editor
             var saveSystemSettings = SaveSystemSettings.Instance;
             saveSystemSettings.GuidsResolver.PopulateDatabase(objectsGuids);
             EditorUtility.SetDirty(saveSystemSettings);
-            AssetDatabase.SaveAssets();
+            AssetDatabase.SaveAssetIfDirty(saveSystemSettings);
             try
             {
                 EditorWindow.focusedWindow.ShowNotification(new GUIContent("Database populated successfully"));
