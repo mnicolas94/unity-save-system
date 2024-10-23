@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using SaveSystem.GuidsResolve.Legacy;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -17,6 +18,7 @@ namespace SaveSystem.GuidsResolve
         public ReadOnlyCollection<Object> Assets => _assets.AsReadOnly();
         public ReadOnlyCollection<string> Guids => _guids.AsReadOnly();
 
+        // TODO optimize this so it does not happen on each deserialization
         private void InitializeLookupDictionaries()
         {
             _assetToGuid.Clear();
@@ -45,9 +47,9 @@ namespace SaveSystem.GuidsResolve
         
         public string GetGuid(Object obj)
         {
-            if (_assetToGuid.ContainsKey(obj))
+            if (TryGetGuid(obj, out var guid))
             {
-                return _assetToGuid[obj];
+                return guid;
             }
 
             throw new ArgumentException($"Object not present in database: {obj}. _assetToGuid count {_assetToGuid.Count}");
@@ -55,9 +57,9 @@ namespace SaveSystem.GuidsResolve
         
         public Object GetObject(string guid)
         {
-            if (_guidToAsset.ContainsKey(guid))
+            if (TryGetObject(guid, out var obj))
             {
-                return _guidToAsset[guid];
+                return obj;
             }
 
             throw new ArgumentException($"Guid not present in database: {guid}");
@@ -65,7 +67,7 @@ namespace SaveSystem.GuidsResolve
         
         public bool TryGetGuid(Object obj, out string guid)
         {
-            if (_assetToGuid.ContainsKey(obj))
+            if (ExistsObject(obj))
             {
                 guid = _assetToGuid[obj];
                 return true;
@@ -77,15 +79,15 @@ namespace SaveSystem.GuidsResolve
         
         public bool TryGetObject(string guid, out Object obj)
         {
-            if (_guidToAsset.ContainsKey(guid))
+            if (ExistsGuid(guid))
             {
                 obj = _guidToAsset[guid];
                 return true;
             }
 
-            obj = null;
-            return false;
+            return LegacyGuidsDeserialization.TryGetObjectFromOldGuid(guid, _guidToAsset, out obj);
         }
+        
         
         public void PopulateDatabase(List<(Object, string)> references)
         {
@@ -107,6 +109,7 @@ namespace SaveSystem.GuidsResolve
 
         public void OnAfterDeserialize()
         {
+            // TODO optimize this so it does not happen on each deserialization
             InitializeLookupDictionaries();
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SaveSystem.GuidsResolve;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -9,14 +8,10 @@ using Object = UnityEngine.Object;
 namespace SaveSystem.Editor.GuidsResolve.Filters
 {
     [Serializable]
-    public class ReferencesInFolder : IReferencesFilter
+    public class ReferencesSearchAndIgnorePaths : IReferencesFilter
     {
         [SerializeField] private List<string> _searchDatabaseAssetsInFolder;
         [SerializeField] private List<string> _ignoreDatabaseAssetsInFolder;
-        [SerializeField] private List<DefaultAsset> _searchDatabaseAssetsInFolderAsset;
-        [SerializeField] private List<DefaultAsset> _ignoreDatabaseAssetsInFolderAsset;
-        [SerializeField] private List<SerializableGlobalObjectId> _addAssets;
-        [SerializeField] private List<SerializableGlobalObjectId> _ignoreAssets;
         
         public void AddObjectsAndGuids(List<(Object, string)> objectsGuids)
         {
@@ -30,8 +25,9 @@ namespace SaveSystem.Editor.GuidsResolve.Filters
             {
                 string objPath = AssetDatabase.GUIDToAssetPath(guid);
                 var obj = AssetDatabase.LoadAssetAtPath<Object>(objPath);
-                objectsGuids.Add((obj, guid));
-                AssetReferencesScanUtils.AddSubAssets(obj, guid, objectsGuids);
+                var globalId = GlobalObjectId.GetGlobalObjectIdSlow(obj).ToString();
+                objectsGuids.Add((obj, globalId));
+                AssetReferencesScanUtils.AddSubAssets(obj, objectsGuids);
             }
         }
         

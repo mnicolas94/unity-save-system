@@ -9,7 +9,6 @@ using Object = UnityEngine.Object;
 
 namespace SaveSystem.Editor.GuidsResolve
 {
-    [CreateAssetMenu(fileName = "Filters", menuName = "Facticus/Save System/Filters")]
     public class AssetReferencesFilterStorage : ScriptableObjectSingleton<AssetReferencesFilterStorage>
     {
         [SerializeReference, SubclassSelector] private List<IReferencesFilter> _filters;

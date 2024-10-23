@@ -15,12 +15,10 @@ namespace SaveSystem.Tests.Editor
         {
             // arrange
             var prefab = TestsReferences.Instance.prefab;
-            var path = AssetDatabase.GetAssetPath(prefab);
-            var guid = AssetDatabase.AssetPathToGUID(path);
 
             // act
             var objsGuids = new List<(Object, string)>();
-            AssetReferencesScanUtils.AddSubAssets(prefab, guid, objsGuids);
+            AssetReferencesScanUtils.AddSubAssets(prefab, objsGuids);
 
             // assert
             var components = prefab.GetComponents<Component>();
@@ -36,12 +34,10 @@ namespace SaveSystem.Tests.Editor
         {
             // arrange
             var prefab = TestsReferences.Instance.persistent;
-            var path = AssetDatabase.GetAssetPath(prefab);
-            var guid = AssetDatabase.AssetPathToGUID(path);
 
             // act
             var objsGuids = new List<(Object, string)>();
-            AssetReferencesScanUtils.AddSubAssets(prefab, guid, objsGuids);
+            AssetReferencesScanUtils.AddSubAssets(prefab, objsGuids);
 
             // assert
             var onlyGuids = objsGuids.Select(o => o.Item2).ToList();

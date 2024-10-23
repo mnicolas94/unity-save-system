@@ -69,7 +69,7 @@ namespace SaveSystem.GuidsResolve
                 );
         }
         
-        private GlobalObjectId ToGlobalObjectId()
+        public GlobalObjectId ToGlobalObjectId()
         {
             GlobalObjectId.TryParse(ToGlobalObjectIdString(), out var globalId);
             return globalId;

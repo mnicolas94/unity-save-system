@@ -177,7 +177,7 @@ namespace SaveSystem
                 var profile = GetEditorAwareProfile();
                 var guid = guidResolver.GetGuid(obj);
                 bool success;
-                Stream stream;
+                Stream stream = null;
                 if (storage is IStorageStream storageStream)
                 {
                     success = storageStream.TryGetStreamToRead(profile, guid, out stream);
@@ -186,7 +186,10 @@ namespace SaveSystem
                 {
                     var (readSuccess, storageData) = await storage.Read(profile, guid);
                     success = readSuccess;
-                    stream = new MemoryStream(storageData);
+                    if (success)
+                    {
+                        stream = new MemoryStream(storageData);
+                    }
                 }
                 
                 // return if storage couldn't read data

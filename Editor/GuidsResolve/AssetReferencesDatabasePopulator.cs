@@ -20,8 +20,13 @@ namespace SaveSystem.Editor.GuidsResolve
         public static void PopulateDatabase()
         {
             var objectsGuids = AssetReferencesScanUtils.GetDataObjectsAndGuids();
+            var objectsGuidsTuple = objectsGuids.ConvertAll(objGuid =>
+            {
+                var (obj, guid) = objGuid;
+                return (obj, guid);
+            });
             var saveSystemSettings = SaveSystemSettings.Instance;
-            saveSystemSettings.GuidsResolver.PopulateDatabase(objectsGuids);
+            saveSystemSettings.GuidsResolver.PopulateDatabase(objectsGuidsTuple);
             EditorUtility.SetDirty(saveSystemSettings);
             AssetDatabase.SaveAssetIfDirty(saveSystemSettings);
             try

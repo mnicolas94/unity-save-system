@@ -23,7 +23,7 @@ namespace SaveSystem
         [SerializeField, HideInInspector,
          Tooltip("A profile allows to isolate contexts to save/load data. e.g. it can be used to " +
                  "implement saves slots. It is also used to isolate saves in the editor from saves " +
-                 "in standalone builds. It wil be used to implement a backup profile in the future.")]
+                 "in standalone builds. It wil be used to implement a backup profile feature in the future.")]
         private string _profile;
         public string Profile
         {
