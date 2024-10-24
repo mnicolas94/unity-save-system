@@ -182,11 +182,16 @@ namespace SaveSystem
                 if (storage is IStorageStream storageStream)
                 {
                     success = storageStream.TryGetStreamToRead(profile, guid, out stream);
+                    if (!success && LegacyGuidsDeserialization.TryGetOldGuidFromNewOne(guid, out var oldGuid))
+                    {
+                        // try to use legacy guids
+                        success = storageStream.TryGetStreamToRead(profile, oldGuid, out stream);
+                    }
                 }
                 else
                 {
                     var (readSuccess, storageData) = await storage.Read(profile, guid);
-                    if (!readSuccess  && LegacyGuidsDeserialization.TryGetOldGuidFromNewOne(guid, out var oldGuid))
+                    if (!readSuccess && LegacyGuidsDeserialization.TryGetOldGuidFromNewOne(guid, out var oldGuid))
                     {
                         // try to use legacy guids
                         (readSuccess, storageData) = await storage.Read(profile, oldGuid);
