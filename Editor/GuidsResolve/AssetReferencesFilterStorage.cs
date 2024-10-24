@@ -11,7 +11,7 @@ namespace SaveSystem.Editor.GuidsResolve
 {
     public class AssetReferencesFilterStorage : ScriptableObjectSingleton<AssetReferencesFilterStorage>
     {
-        [SerializeReference, SubclassSelector] private List<IReferencesFilter> _filters;
+        [SerializeReference, SubclassSelector] private List<IReferencesFilter> _filters = new();
 
         public List<(Object, string)> GetObjectsAndGuids()
         {
@@ -49,9 +49,10 @@ namespace SaveSystem.Editor.GuidsResolve
                 var settings = SaveSystemSettings.Editor_GetOrCreate();
                 var settingsPath = AssetDatabase.GetAssetPath(settings);
                 var settingsDirectory = Directory.GetParent(settingsPath);
-                var storageDirectory = Path.Combine(settingsDirectory.Name, "Editor");
+                var settingsDirectoryString = settingsDirectory.FullName.Replace("\\", "/");
+                var settingsDirectoryRelative = settingsDirectoryString.Replace(Application.dataPath, "Assets");
+                var storageDirectory = Path.Combine(settingsDirectoryRelative, "Editor");
                 Directory.CreateDirectory(storageDirectory);
-                AssetDatabase.Refresh();
 
                 // create asset
                 var storage = CreateInstance<AssetReferencesFilterStorage>();
