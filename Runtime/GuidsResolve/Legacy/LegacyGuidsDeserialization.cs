@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine;
+using UnityEditor;
+using Object = UnityEngine.Object;
 
 namespace SaveSystem.GuidsResolve.Legacy
 {
@@ -9,6 +11,7 @@ namespace SaveSystem.GuidsResolve.Legacy
     {
         private const string Separator = "---";
         private const string NewIdsPattern = @"GlobalObjectId_V1-\d+-([a-f\d]+)-(\d+)-(\d+)";
+        private const string ScriptaObjectsMainLocalId = "11400000";
 
         public static bool TryGetObjectFromOldGuid(string guid, Dictionary<string, Object> idToAsset, out Object obj)
         {
@@ -34,6 +37,33 @@ namespace SaveSystem.GuidsResolve.Legacy
             
             obj = idToAsset[newId];
             return true;
+        }
+        
+        public static bool TryGetOldGuidFromNewOne(string newId, out string guid)
+        {
+            var regex = new Regex(NewIdsPattern);
+            var match = regex.Match(newId);
+            if (match.Success)
+            {
+                var guidPart = match.Groups[1].Value;
+                var localIdPart = match.Groups[2].Value;
+                
+                guid = guidPart;
+
+                if (localIdPart != ScriptaObjectsMainLocalId)
+                {
+                    // we need to convert the localIdPart to a signed long.
+                    // More info at https://docs.unity3d.com/ScriptReference/GlobalObjectId.html#:~:text=Note%3A%20Actual%20local,find%20an%20object. 
+                    var localId = (long)ulong.Parse(localIdPart);
+                    var localIdString = localId.ToString();
+                    guid = string.Concat(guid, Separator, localIdString);
+                }
+
+                return true;
+            }
+
+            guid = String.Empty;
+            return false;
         }
 
         private static bool TryToGetNewIdFromGuid(string guid, List<string> newIds, out string newId)

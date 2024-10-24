@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using SaveSystem.GuidsResolve.Legacy;
 using SaveSystem.Storages;
 using SaveSystem.Utilities;
 using UnityEngine;
@@ -185,6 +186,11 @@ namespace SaveSystem
                 else
                 {
                     var (readSuccess, storageData) = await storage.Read(profile, guid);
+                    if (!readSuccess  && LegacyGuidsDeserialization.TryGetOldGuidFromNewOne(guid, out var oldGuid))
+                    {
+                        // try to use legacy guids
+                        (readSuccess, storageData) = await storage.Read(profile, oldGuid);
+                    }
                     success = readSuccess;
                     if (success)
                     {
