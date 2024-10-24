@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SaveSettings
   m_EditorClassIdentifier: 
   _storage:
-    rid: 231199910836830239
+    rid: 7989746935762780163
   _profile: 
   _serializer:
     rid: 2350179849866838017
@@ -24,7 +24,8 @@ MonoBehaviour:
   - Assets/SaveSystem/Samples/Persistents
   - Assets/SaveSystem/Samples/Integrations/Atoms
   - Assets/SaveSystem/Tests/Editor/Data
-  _ignoreDatabaseAssetsInPaths: []
+  _ignoreDatabaseAssetsInPaths:
+  - 
   _populateDatabaseBeforeEnterPlayMode: 1
   _broadcaster:
     _onSave:
@@ -37,13 +38,13 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 231199910836830239
-      type: {class: PlayerPrefsStorage, ns: SaveSystem.Storages, asm: com.facticus.savesystem}
-      data: 
     - rid: 2350179849866838017
       type: {class: UnitySerializer, ns: SaveSystem.Serializers, asm: com.facticus.savesystem}
       data:
         _mode: 1
+    - rid: 7989746935762780163
+      type: {class: PlayerPrefsStorage, ns: SaveSystem.Storages, asm: com.facticus.savesystem}
+      data: 
     - rid: 8263538504144257024
       type: {class: GuidsDatabase, ns: SaveSystem.GuidsResolve, asm: com.facticus.savesystem}
       data:
@@ -55,17 +56,6 @@ MonoBehaviour:
         - {fileID: 266668705277271945, guid: 838d432941c4911479913d8da0236760, type: 2}
         - {fileID: 11400000, guid: 7e793eb07d56f564e9afcadaf8882edd, type: 2}
         - {fileID: 11400000, guid: 56cbcf9014bf60747b7dcf68b28023e7, type: 2}
-        - {fileID: 11400000, guid: 852e2a0f7eeecee4aaedd30bcc3cc16b, type: 2}
-        - {fileID: 11400000, guid: 3ec349c8e69e3a84bbb1cd168c511f55, type: 2}
-        - {fileID: 11400000, guid: 94359032240746f4fadcb95af5c7d0fc, type: 2}
-        - {fileID: 11400000, guid: c284e7c4f1669c44cb949d7b49e92e0a, type: 2}
-        - {fileID: 11400000, guid: 56f0cb43530c4714aabc61565ca800b4, type: 2}
-        - {fileID: 11400000, guid: 783ac5c3538aba94bbab774637d701fd, type: 2}
-        - {fileID: 4039363502088776181, guid: 783ac5c3538aba94bbab774637d701fd, type: 2}
-        - {fileID: -7799269117154370780, guid: 783ac5c3538aba94bbab774637d701fd, type: 2}
-        - {fileID: 2556140533295862126, guid: dbd3f6441f7c62b4e92b7ea8b8b15989, type: 3}
-        - {fileID: 2867683906394905661, guid: dbd3f6441f7c62b4e92b7ea8b8b15989, type: 3}
-        - {fileID: 5959463473788319725, guid: dbd3f6441f7c62b4e92b7ea8b8b15989, type: 3}
         _guids:
         - GlobalObjectId_V1-3-208746278a96d5d419f3c5f3711dce4e-11400000-0
         - GlobalObjectId_V1-3-7cd44c378cb83394ca6c278216d6e861-11400000-0
@@ -74,14 +64,3 @@ MonoBehaviour:
         - GlobalObjectId_V1-3-838d432941c4911479913d8da0236760-266668705277271945-0
         - GlobalObjectId_V1-3-7e793eb07d56f564e9afcadaf8882edd-11400000-0
         - GlobalObjectId_V1-3-56cbcf9014bf60747b7dcf68b28023e7-11400000-0
-        - GlobalObjectId_V1-3-852e2a0f7eeecee4aaedd30bcc3cc16b-11400000-0
-        - GlobalObjectId_V1-3-3ec349c8e69e3a84bbb1cd168c511f55-11400000-0
-        - GlobalObjectId_V1-3-94359032240746f4fadcb95af5c7d0fc-11400000-0
-        - GlobalObjectId_V1-3-c284e7c4f1669c44cb949d7b49e92e0a-11400000-0
-        - GlobalObjectId_V1-3-56f0cb43530c4714aabc61565ca800b4-11400000-0
-        - GlobalObjectId_V1-3-783ac5c3538aba94bbab774637d701fd-11400000-0
-        - GlobalObjectId_V1-3-783ac5c3538aba94bbab774637d701fd-4039363502088776181-0
-        - GlobalObjectId_V1-3-783ac5c3538aba94bbab774637d701fd-10647474956555180836-0
-        - GlobalObjectId_V1-1-dbd3f6441f7c62b4e92b7ea8b8b15989-2556140533295862126-0
-        - GlobalObjectId_V1-1-dbd3f6441f7c62b4e92b7ea8b8b15989-2867683906394905661-0
-        - GlobalObjectId_V1-1-dbd3f6441f7c62b4e92b7ea8b8b15989-5959463473788319725-0

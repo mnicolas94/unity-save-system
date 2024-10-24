@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fab9e1654a99784f91064569c8d640b, type: 3}
   m_Name: TestPersistenceWithReferences
   m_EditorClassIdentifier: 
-  _reference1: {fileID: 0}
-  _reference2: {fileID: 0}
-  _reference3: {fileID: 0}
-  _list: []
+  _reference1: {fileID: 11400000, guid: 208746278a96d5d419f3c5f3711dce4e, type: 2}
+  _reference2: {fileID: -1192697359426864680, guid: 838d432941c4911479913d8da0236760, type: 2}
+  _reference3: {fileID: 11400000, guid: 838d432941c4911479913d8da0236760, type: 2}
+  _list:
+  - {fileID: 11400000, guid: 7e793eb07d56f564e9afcadaf8882edd, type: 2}
+  - {fileID: 11400000, guid: 56cbcf9014bf60747b7dcf68b28023e7, type: 2}

@@ -54,11 +54,6 @@ namespace SaveSystem.GuidsResolve
             }
         }
 
-        private GUID GetGuid()
-        {
-            return new GUID(GetGuidString());
-        }
-
         private string ToGlobalObjectIdString()
         {
             return string.Concat(

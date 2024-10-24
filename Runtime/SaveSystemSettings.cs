@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SaveSystem.GuidsResolve;
 using SaveSystem.Serializers;
 using SaveSystem.Storages;
@@ -48,9 +49,13 @@ namespace SaveSystem
         [SerializeReference, SubclassSelector] private IGuidResolver _guidsResolver = new GuidsDatabase();
         public IGuidResolver GuidsResolver => _guidsResolver;
 
+        [Obsolete("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
+        [Tooltip("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
         [SerializeField] private List<string> _searchDatabaseAssetsInPaths;
         public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
         
+        [Obsolete("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
+        [Tooltip("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
         [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
         public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
         
@@ -78,7 +83,6 @@ namespace SaveSystem
 
             return Instance;
         }
-        
 #endif
     }
 }

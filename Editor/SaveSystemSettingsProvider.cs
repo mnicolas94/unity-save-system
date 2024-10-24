@@ -1,8 +1,6 @@
-﻿using SaveSystem.GuidsResolve;
-using UnityEditor;
-using UnityEngine;
-using Utils.Editor;
-using Utils.Editor.EditorGUIUtils;
+﻿using UnityEditor;
+using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 
 namespace SaveSystem.Editor
 {
@@ -14,14 +12,17 @@ namespace SaveSystem.Editor
             var settings = SaveSystemSettings.Editor_GetOrCreate();
             SerializedObject so = new SerializedObject(settings);
             var keywords = SettingsProvider.GetSearchKeywordsFromSerializedObject(so);
+            
             var provider = new SettingsProvider("Project/Facticus/Save system", SettingsScope.Project)
             {
-                guiHandler = (searchContext) =>
+                activateHandler = (searchContext, rootElement) =>
                 {
-                    EditorGUILayout.Space(12);
-                    GUIUtils.DrawSerializedObject(so);
+                    var inspector = new InspectorElement(settings);
+                    var scroll = new ScrollView(ScrollViewMode.Vertical);
+                    scroll.Add(inspector);
+                    rootElement.Add(scroll);
                 },
-                keywords = keywords
+                keywords = keywords,
             };
             
             return provider;

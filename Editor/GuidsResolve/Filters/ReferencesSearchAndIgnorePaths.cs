@@ -7,6 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace SaveSystem.Editor.GuidsResolve.Filters
 {
+    [Obsolete("Use ReferencesSearchAndIgnore instead.")]
     [Serializable]
     public class ReferencesSearchAndIgnorePaths : IReferencesFilter
     {

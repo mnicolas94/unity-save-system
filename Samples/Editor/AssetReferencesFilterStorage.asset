@@ -13,25 +13,26 @@ MonoBehaviour:
   m_Name: AssetReferencesFilterStorage
   m_EditorClassIdentifier: 
   _filters:
-  - rid: 7989746804084441088
+  - rid: 7989746935762780167
   references:
     version: 2
     RefIds:
-    - rid: 7989746804084441088
-      type: {class: ReferencesInFolder, ns: SaveSystem.Editor.GuidsResolve.Filters, asm: com.facticus.savesystem.Editor}
+    - rid: 7989746935762780167
+      type: {class: ReferencesSearchAndIgnore, ns: SaveSystem.Editor.GuidsResolve.Filters, asm: com.facticus.savesystem.Editor}
       data:
-        _searchDatabaseAssetsInFolder: []
-        _ignoreDatabaseAssetsInFolder: []
-        _searchDatabaseAssetsInFolderAsset: []
-        _ignoreDatabaseAssetsInFolderAsset: []
         _addAssets:
-        - _guidLow: 7385445269878359228
-          _guidHigh: 10895910904861498295
+        - _guidLow: 15499604660666123188
+          _guidHigh: 12921247143788971278
           _targetObjectId: 102900000
           _targetPrefabId: 0
           _identifierType: 1
-        - _guidLow: 6240105973202829905
-          _guidHigh: 12056516367199042430
+        - _guidLow: 5271322341345148932
+          _guidHigh: 13302896960806790953
+          _targetObjectId: 102900000
+          _targetPrefabId: 0
+          _identifierType: 1
+        - _guidLow: 11723253429270811220
+          _guidHigh: 672937322039763623
           _targetObjectId: 102900000
           _targetPrefabId: 0
           _identifierType: 1
