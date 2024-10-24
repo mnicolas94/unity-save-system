@@ -35,25 +35,25 @@ namespace SaveSystem.Editor.GuidsResolve
         [MenuItem("Assets/Facticus/SaveSystem/Search assets in paths", true, 1000)]
         public static bool IncludeAssetMenuValidation()
         {
-            return IncludeOrExcludeAssetMenuValidation(SaveSystemSettings.Instance.SearchDatabaseAssetsInPaths, true);
+            return IncludeOrExcludeAssetMenuValidation(false, true);
         }
         
         [MenuItem("Assets/Facticus/SaveSystem/Ignore assets in paths", true, 1000)]
         public static bool IgnoreAssetMenuValidation()
         {
-            return IncludeOrExcludeAssetMenuValidation(SaveSystemSettings.Instance.IgnoreDatabaseAssetsInPaths, true);
+            return IncludeOrExcludeAssetMenuValidation(true, true);
         }
         
         [MenuItem("Assets/Facticus/SaveSystem/Stop searching assets in paths", true, 1000)]
         public static bool RemoveIncludeAssetMenuValidation()
         {
-            return IncludeOrExcludeAssetMenuValidation(SaveSystemSettings.Instance.SearchDatabaseAssetsInPaths, false);
+            return IncludeOrExcludeAssetMenuValidation(false, false);
         }
         
         [MenuItem("Assets/Facticus/SaveSystem/Stop ignoring assets in paths", true, 1000)]
         public static bool RemoveIgnoreAssetMenuValidation()
         {
-            return IncludeOrExcludeAssetMenuValidation(SaveSystemSettings.Instance.IgnoreDatabaseAssetsInPaths, false);
+            return IncludeOrExcludeAssetMenuValidation(true, false);
         }
         
         private static void AddAssets(bool asIgnore)
@@ -102,13 +102,9 @@ namespace SaveSystem.Editor.GuidsResolve
             EditorUtility.SetDirty(filterStorage);
         }
         
-        private static bool IncludeOrExcludeAssetMenuValidation(List<string> paths, bool wantToAdd)
+        private static bool IncludeOrExcludeAssetMenuValidation(bool asIgnore, bool wantToAdd)
         {
-            Debug.Log("!!!Validating!!!");
-            // var guids = Selection.assetGUIDs;
-            // var selectedPaths = guids.Select(AssetDatabase.GUIDToAssetPath);
-            // var anyNotIncluded = selectedPaths.Any(path => paths.Contains(path) ^ wantToAdd);
-            // return anyNotIncluded;
+            // TODO: implement
             return true;
         }
     }
