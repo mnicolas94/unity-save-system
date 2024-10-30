@@ -73,7 +73,13 @@ namespace SaveSystem
             return SaveSystemSettings.SaveProfile;
         }
 
+        [Obsolete("Use ResetObject instead.")]
         public static void ResetPersistentObject(ScriptableObject obj)
+        {
+            ResetObject(obj);
+        }
+        
+        public static void ResetObject(ScriptableObject obj)
         {
             if (obj is IPersistentResetable resetable)
             {
@@ -270,6 +276,19 @@ namespace SaveSystem
             }
             
             return report;
+        }
+
+        public static async Task RemoveObjectData(ScriptableObject obj)
+        {
+            var saveSystemSettings = SaveSystemSettings.Instance;
+            var storage = saveSystemSettings.Storage;
+            var guidResolver = saveSystemSettings.GuidsResolver;
+            var profile = GetEditorAwareProfile();
+
+            if (guidResolver.TryGetGuid(obj, out var id))
+            {
+                await storage.Delete(profile, id);
+            }
         }
 
         private static byte[] GenerateMd5(byte[] data)

@@ -39,6 +39,42 @@ namespace SaveSystem.Utilities
 
             return report;
         }
+
+        public async Task<bool> IsAnySaved()
+        {
+            foreach (var obj in _objects)  // TODO perhaps parallelize this?
+            {
+                var isSaved = await obj.IsSaved();
+                if (isSaved)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
+        public async Task<bool> AreAllSaved()
+        {
+            foreach (var obj in _objects)  // TODO perhaps parallelize this?
+            {
+                var isSaved = await obj.IsSaved();
+                if (!isSaved)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public async Task DeleteData()
+        {
+            foreach (var obj in _objects)  // TODO perhaps parallelize this?
+            {
+                await SaveUtils.RemoveObjectData(obj);
+            }
+        }
         
         public void ResetToDefault()
         {
