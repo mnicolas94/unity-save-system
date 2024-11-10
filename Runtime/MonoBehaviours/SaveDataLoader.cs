@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using SaveSystem.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,15 +15,15 @@ namespace SaveSystem
         [SerializeField] private List<ScriptableObject> _data;
         [SerializeField] private bool _loadOnStart = true;
         
-        private void Start()
+        private async void Start()
         {
             if (_loadOnStart)
             {
-                LoadSaveDataAsync(destroyCancellationToken);
+                await LoadSaveDataAsync(destroyCancellationToken);
             }
         }
 
-        public async void LoadSaveDataAsync(CancellationToken ct)
+        public async Task LoadSaveDataAsync(CancellationToken ct)
         {
             float loadPersistentsProgress = 0.5f;
             _onLoadingProgress.Invoke(loadPersistentsProgress);
