@@ -288,6 +288,12 @@ namespace SaveSystem
             if (guidResolver.TryGetGuid(obj, out var id))
             {
                 await storage.Delete(profile, id);
+
+                // try to remove legacy data
+                if (LegacyGuidsDeserialization.TryGetOldGuidFromNewOne(id, out var oldId))
+                {
+                    await storage.Delete(profile, oldId);
+                }
             }
         }
 
