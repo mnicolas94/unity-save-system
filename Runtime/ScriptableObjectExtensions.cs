@@ -12,12 +12,12 @@ namespace SaveSystem
             await SaveUtils.SaveObject(obj);
         }
         
-        public static async Task<SaveUtils.LoadReport> Load(this ScriptableObject obj)
+        public static async Task<LoadReport> Load(this ScriptableObject obj)
         {
             return await SaveUtils.LoadObject(obj);
         }
 
-        public static async Task<SaveUtils.LoadReport> LoadOrCreate(this ScriptableObject obj)
+        public static async Task<LoadReport> LoadOrCreate(this ScriptableObject obj)
         {
             if (obj is SaveGroup group)
             {

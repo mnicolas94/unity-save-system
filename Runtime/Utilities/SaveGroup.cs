@@ -41,9 +41,9 @@ namespace SaveSystem.Utilities
             }
         }
         
-        public async Task<SaveUtils.LoadReport> Load()
+        public async Task<LoadReport> Load()
         {
-            SaveUtils.LoadReport report = default;
+            LoadReport report = default;
             foreach (var obj in _objects)
             {
                 report = await obj.Load();
@@ -52,9 +52,9 @@ namespace SaveSystem.Utilities
             return report;
         }
 
-        public async Task<SaveUtils.LoadReport> LoadOrCreate()
+        public async Task<LoadReport> LoadOrCreate()
         {
-            SaveUtils.LoadReport report = default;
+            LoadReport report = default;
             foreach (var obj in _objects)
             {
                 report = await obj.LoadOrCreate();
