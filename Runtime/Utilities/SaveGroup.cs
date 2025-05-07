@@ -10,6 +10,14 @@ namespace SaveSystem.Utilities
     {
         [SerializeField, DoNotPersist] private List<ScriptableObject> _objects;
 
+        public void AddToGroup(ScriptableObject obj)
+        {
+            if (!_objects.Contains(obj))
+            {
+                _objects.Add(obj);
+            }
+        }
+
         public async Task Save()
         {
             foreach (var obj in _objects)
