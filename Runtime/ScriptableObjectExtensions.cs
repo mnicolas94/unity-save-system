@@ -49,7 +49,7 @@ namespace SaveSystem
         
         public static void ResetToDefault(this ScriptableObject obj)
         {
-            SaveUtils.ResetPersistentObject(obj);
+            SaveUtils.ResetObject(obj);
         }
 
         public static void RegisterOnSaveListener(this ScriptableObject obj, Action listener)

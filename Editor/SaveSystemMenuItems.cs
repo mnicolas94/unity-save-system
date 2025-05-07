@@ -38,7 +38,7 @@ namespace SaveSystem.Editor
             Undo.RecordObjects(selected, "Reset data");
             foreach (var obj in selected)
             {
-                SaveUtils.ResetPersistentObject(obj);
+                SaveUtils.ResetObject(obj);
             }
         }
         
