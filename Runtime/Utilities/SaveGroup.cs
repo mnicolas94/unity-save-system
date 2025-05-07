@@ -23,6 +23,16 @@ namespace SaveSystem.Utilities
             }
         }
 
+        public void RemoveFromGroup(ScriptableObject obj)
+        {
+            _objects.Remove(obj);
+        }
+
+        public void Clear()
+        {
+            _objects.Clear();
+        }
+
         public async Task Save()
         {
             foreach (var obj in _objects)
