@@ -12,8 +12,6 @@ namespace SaveSystem
 {
     public static class SaveUtils
     {
-        private const string Pass = "9183h9ghsdpu19g8qwfg193rfapidfg1-97gdiufg193fgas=fg13ut";
-        
         public static string GetEditorAwareProfile()
         {
 #if UNITY_EDITOR
@@ -71,7 +69,7 @@ namespace SaveSystem
             var deviceId = SystemInfo.deviceUniqueIdentifier;
             var checksum = Md5.GenerateMd5(data);
             var encryptedData = saveSystemSettings.EncryptData
-                ? DesEncryption.Encrypt(data, Pass)
+                ? DesEncryption.Encrypt(data)
                 : data;
 
             // write in storage
@@ -179,7 +177,7 @@ namespace SaveSystem
                 // decrypt data if encrypted
                 byte[] decryptedData;
                 if (saveSystemSettings.EncryptData)
-                    DesEncryption.TryDecrypt(data, Pass, out decryptedData);
+                    DesEncryption.TryDecrypt(data, out decryptedData);
                 else
                     decryptedData = data;
 

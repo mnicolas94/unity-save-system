@@ -7,8 +7,15 @@ namespace SaveSystem.Encryption
 {
     public static class DesEncryption
     {
+        private const string Pass = "9183h9ghsdpu19g8qwfg193rfapidfg1-97gdiufg193fgas=fg13ut";
+
         static readonly int Iterations = 1000;
 
+        public static byte[] Encrypt(byte[] data)
+        {
+            return Encrypt(data, Pass);
+        }
+        
         public static byte[] Encrypt(byte[] data, string password)
         {
             if (data == null)
@@ -47,6 +54,11 @@ namespace SaveSystem.Encryption
                 return memoryStream.ToArray();
             }
         }
+
+        public static string Encrypt(string plainText)
+        {
+            return Encrypt(plainText, Pass);
+        }
         
         public static string Encrypt(string plainText, string password)
         {
@@ -59,6 +71,11 @@ namespace SaveSystem.Encryption
             return Convert.ToBase64String(encrypted);
         }
 
+        public static bool TryDecrypt(byte[] cipherBytes, out byte[] decrypted)
+        {
+            return TryDecrypt(cipherBytes, Pass, out decrypted);
+        }
+        
         public static bool TryDecrypt(byte[] cipherBytes, string password, out byte[] decrypted)
         {
             if (cipherBytes == null || string.IsNullOrEmpty(password))
@@ -88,6 +105,11 @@ namespace SaveSystem.Encryption
                 cryptoStream.Read(decrypted, 0, len);
                 return true;
             }
+        }
+
+        public static bool TryDecrypt(string cipherText, out string plainText)
+        {
+            return TryDecrypt(cipherText, Pass, out plainText);
         }
         
         public static bool TryDecrypt(string cipherText, string password, out string plainText)
