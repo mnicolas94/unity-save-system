@@ -10,6 +10,11 @@ namespace SaveSystem.Utilities
     {
         [SerializeField, DoNotPersist] private List<ScriptableObject> _objects;
 
+        public bool IsInGroup(ScriptableObject obj)
+        {
+            return _objects.Contains(obj);
+        }
+        
         public void AddToGroup(ScriptableObject obj)
         {
             if (!_objects.Contains(obj))
