@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SaveSystem.Utilities;
 using UnityEngine;
 
 namespace SaveSystem
@@ -18,6 +19,11 @@ namespace SaveSystem
 
         public static async Task<SaveUtils.LoadReport> LoadOrCreate(this ScriptableObject obj)
         {
+            if (obj is SaveGroup group)
+            {
+                return await group.LoadOrCreate();
+            }
+            
             var report = await SaveUtils.LoadObject(obj);
             if (!report.Success)
             {

@@ -272,7 +272,7 @@ namespace SaveSystem
             {
                 report.Success = false;
                 report.FailureReason = e.Message;
-                DebugLogError($"Error during load: {e.Message}");
+                Logging.DebugLogError($"Error during load: {e.Message}");
             }
             
             return report;
@@ -319,20 +319,6 @@ namespace SaveSystem
                 sb.Append(hash[i].ToString("X2"));
             }
             return sb.ToString();
-        }
-        
-        private static void DebugLog(string message)
-        {
-            if (SaveSystemSettings.Instance.DebugLogging)
-            {
-                Debug.Log(message);
-            }
-        }
-        
-        private static void DebugLogError(string message)
-        {
-            // always log errors
-            Debug.LogError(message);
         }
     }
 }
