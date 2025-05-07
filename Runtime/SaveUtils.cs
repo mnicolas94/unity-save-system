@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using SaveSystem.Encryption;
 using SaveSystem.GuidsResolve.Legacy;
 using SaveSystem.Storages;
 using SaveSystem.Utilities;
@@ -36,7 +35,7 @@ namespace SaveSystem
             {
                 if (Data == null)
                     return true;
-                var newChecksum = GenerateMd5(Data);
+                var newChecksum = Md5.GenerateMd5(Data);
                 int len = newChecksum.Length;
                 for (int i = 0; i < len; i++)
                 {
@@ -120,7 +119,7 @@ namespace SaveSystem
             // get save metadata and encrypt data
             var version = Application.version;
             var deviceId = SystemInfo.deviceUniqueIdentifier;
-            var checksum = GenerateMd5(data);
+            var checksum = Md5.GenerateMd5(data);
             var encryptedData = saveSystemSettings.EncryptData
                 ? DesEncryption.Encrypt(data, Pass)
                 : data;
@@ -241,7 +240,7 @@ namespace SaveSystem
                 report.DeviceId = deviceId;
                 report.Checksum = checkSum;
                 report.Data = decryptedData;
-                report.ChecksumStr = Md5HashToString(checkSum);
+                report.ChecksumStr = Md5.Md5HashToString(checkSum);
                 report.DataStr = Encoding.UTF8.GetString(decryptedData);
 
                 // deserialize data
@@ -295,30 +294,6 @@ namespace SaveSystem
                     await storage.Delete(profile, oldId);
                 }
             }
-        }
-
-        private static byte[] GenerateMd5(byte[] data)
-        {
-            var md5 = MD5.Create();
-            byte[] hash = md5.ComputeHash(data);
-            return hash;
-        }
-        
-        private static string GenerateMd5(string text)
-        {
-            byte[] inputBytes = Encoding.UTF8.GetBytes(text);
-            byte[] hash = GenerateMd5(inputBytes);
-            return Md5HashToString(hash);
-        }
-
-        private static string Md5HashToString(byte[] hash)
-        {
-            var sb = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
         }
     }
 }
