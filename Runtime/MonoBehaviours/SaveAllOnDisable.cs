@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SaveSystem.Utilities;
 using UnityEngine;
 
 namespace SaveSystem
@@ -11,10 +10,6 @@ namespace SaveSystem
         {
             foreach (var persistentObject in _persistentObjects)
             {
-                if (persistentObject is SaveGroup group)
-                {
-                    await group.Save();
-                }
                 await persistentObject.Save();
             }
         }

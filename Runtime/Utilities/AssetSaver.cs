@@ -9,10 +9,6 @@ namespace SaveSystem.Utilities
     {
         public async void Save(ScriptableObject obj)
         {
-            if (obj is SaveGroup group)
-            {
-                await group.Save();
-            }
             await obj.Save();
         }
     }

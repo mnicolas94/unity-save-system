@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SaveSystem.Utilities
 {
     [CreateAssetMenu(fileName = "SaveGroup", menuName = "Facticus/Save System/SaveGroup", order = 0)]
-    public class SaveGroup : ScriptableObject, IPersistentResetable
+    public class SaveGroup : ScriptableObject, IPersistentResetable, IPersistentAdapter
     {
         [SerializeField, DoNotPersist] private List<ScriptableObject> _objects;
 
@@ -63,6 +63,11 @@ namespace SaveSystem.Utilities
             return report;
         }
 
+        public Task<bool> IsSaved()
+        {
+            return AreAllSaved();
+        }
+
         public async Task<bool> IsAnySaved()
         {
             foreach (var obj in _objects)  // TODO perhaps parallelize this?
@@ -95,7 +100,7 @@ namespace SaveSystem.Utilities
         {
             foreach (var obj in _objects)  // TODO perhaps parallelize this?
             {
-                await SaveUtils.RemoveObjectData(obj);
+                await obj.DeleteData();
             }
         }
         

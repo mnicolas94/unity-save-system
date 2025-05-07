@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SaveSystem.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,14 +30,7 @@ namespace SaveSystem
             for (int i = 0; i < count; i++)
             {
                 var persistent = _data[i];
-                if (persistent is SaveGroup group)
-                {
-                    await group.LoadOrCreate();
-                }
-                else
-                {
-                    await persistent.LoadOrCreate();
-                }
+                await persistent.LoadOrCreate();
                 
                 if (ct.IsCancellationRequested)
                     break;

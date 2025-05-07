@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SaveSystem.Utilities;
 using UnityEngine;
 
 namespace SaveSystem
@@ -9,19 +8,30 @@ namespace SaveSystem
     {
         public static async Task Save(this ScriptableObject obj)
         {
+            if (obj is IPersistentAdapter adapter)
+            {
+                await adapter.Save();
+                return;
+            }
+            
             await SaveUtils.SaveObject(obj);
         }
         
         public static async Task<LoadReport> Load(this ScriptableObject obj)
         {
+            if (obj is IPersistentAdapter adapter)
+            {
+                return await adapter.Load();
+            }
+            
             return await SaveUtils.LoadObject(obj);
         }
 
         public static async Task<LoadReport> LoadOrCreate(this ScriptableObject obj)
         {
-            if (obj is SaveGroup group)
+            if (obj is IPersistentAdapter adapter)
             {
-                return await group.LoadOrCreate();
+                return await adapter.LoadOrCreate();
             }
             
             var report = await SaveUtils.LoadObject(obj);
@@ -37,6 +47,11 @@ namespace SaveSystem
 
         public static async Task<bool> IsSaved(this ScriptableObject obj)
         {
+            if (obj is IPersistentAdapter adapter)
+            {
+                return await adapter.IsSaved();
+            }
+            
             var saveSystemSettings = SaveSystemSettings.Instance;
             var storage = saveSystemSettings.Storage;
             var guidResolver = saveSystemSettings.GuidsResolver;
@@ -45,6 +60,11 @@ namespace SaveSystem
             var guid = guidResolver.GetGuid(obj);
             var exists = await storage.ExistsData(profile, guid);
             return exists;
+        }
+
+        public static async Task DeleteData(this ScriptableObject obj)
+        {
+            await SaveUtils.RemoveObjectData(obj);
         }
         
         public static void ResetToDefault(this ScriptableObject obj)
