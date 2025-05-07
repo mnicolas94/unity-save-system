@@ -41,8 +41,6 @@ namespace SaveSystem
         
         public static async Task SaveObject(ScriptableObject obj)
         {
-            await Task.Yield();  // this is to allow this function to run asynchronously
-            
             var saveSystemSettings = SaveSystemSettings.Instance;
             var guidResolver = saveSystemSettings.GuidsResolver;
             
@@ -112,7 +110,6 @@ namespace SaveSystem
 
         public static async Task<LoadReport> LoadObject(ScriptableObject obj)
         {
-            await Task.Yield();  // this is to allow this function to run asynchronously
             var report = new LoadReport();
 
             try
