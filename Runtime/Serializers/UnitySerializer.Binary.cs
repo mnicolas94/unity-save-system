@@ -33,7 +33,7 @@ namespace SaveSystem.Serializers
             var parameters = GetBinarySerializationParameters(guidsResolver);
             var deserialized = BinarySerialization.FromBinary<T>(&reader, parameters);
             
-            ReflectionUtils.CopyTo(deserialized, obj);
+            SerializationUtilities.CopyTo(deserialized, obj);
         }
         
         private static BinarySerializationParameters GetBinarySerializationParameters(IGuidResolver guidsResolver)

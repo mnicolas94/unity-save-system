@@ -26,7 +26,7 @@ namespace SaveSystem.Serializers
             var json = Encoding.UTF8.GetString(data);
             var deserialized = JsonSerialization.FromJson<T>(json, parameters);
             
-            ReflectionUtils.CopyTo(deserialized, obj);
+            SerializationUtilities.CopyTo(deserialized, obj);
         }
         
         private static JsonSerializationParameters GetJsonSerializationParameters(IGuidResolver guidsResolver)

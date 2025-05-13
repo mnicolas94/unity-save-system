@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using SaveSystem.Attributes;
+using Unity.Properties;
 using UnityEngine;
 
 namespace SaveSystem.Utilities
@@ -22,8 +23,10 @@ namespace SaveSystem.Utilities
         
         public static List<FieldInfo> GetPersistentFields(Type type)
         {
-            var serializableFields = new List<FieldInfo>();
-            var persistDeclaredOnly = type.GetCustomAttribute<PersistDeclaredOnlyAttribute>() != null;
+            var persistentFields = new List<FieldInfo>();
+            var allowedFields = new List<FieldInfo>();
+            
+            CopyAllowedFields(type, allowedFields);
             
             // get fields to ignore
             var ignoreFields = new List<string>();
@@ -32,10 +35,17 @@ namespace SaveSystem.Utilities
             {
                 ignoreFields.AddRange(doNotPersistAttribute.Fields);
             }
+            CopyPersistentFields(persistentFields, allowedFields, ignoreFields);
             
+            return persistentFields;
+        }
+
+        private static void CopyAllowedFields(Type type, List<FieldInfo> allowedFields)
+        {
+            var persistDeclaredOnly = type.GetCustomAttribute<PersistDeclaredOnlyAttribute>() != null;
             if (persistDeclaredOnly)
             {
-                serializableFields.AddRange(type.GetRuntimeFields());
+                allowedFields.AddRange(type.GetRuntimeFields());
             }
             else
             {
@@ -47,30 +57,37 @@ namespace SaveSystem.Utilities
                     {
                         onlyFields.AddRange(att.Fields);
                     }
-                    
-                    var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+                    var bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
+                                       BindingFlags.DeclaredOnly;
                     var fields = type.GetFields(bindingFlags);
                     foreach (var field in fields)
                     {
-                        // Check if the field is marked as serializable or is public
-                        if (Attribute.IsDefined(field, typeof(SerializeField)) || 
-                            (!Attribute.IsDefined(field, typeof(NonSerializedAttribute)) && field.IsPublic))
+                        if (onlyFields.Count == 0 || onlyFields.Contains(field.Name))
                         {
-                            var doPersist = onlyFields.Count == 0 || onlyFields.Contains(field.Name);
-                            doPersist &= field.GetCustomAttribute<DoNotPersistAttribute>() == null;
-                            doPersist &= !ignoreFields.Contains(field.Name);
-                            if (doPersist)
-                            {
-                                serializableFields.Add(field);
-                            }
+                            allowedFields.Add(field);
                         }
                     }
-
+                    
                     type = type.BaseType;
                 }
             }
-            
-            return serializableFields;
+        }
+
+        private static void CopyPersistentFields(List<FieldInfo> destiny, List<FieldInfo> fields,
+            List<string> ignoreFieldsNames)
+        {
+            foreach (var field in fields)
+            {
+                var doPersist = Attribute.IsDefined(field, typeof(SerializeField));
+                doPersist |= !Attribute.IsDefined(field, typeof(NonSerializedAttribute)) && field.IsPublic;
+                doPersist &= !Attribute.IsDefined(field, typeof(DoNotPersistAttribute));
+                doPersist &= !ignoreFieldsNames.Contains(field.Name);
+                if (doPersist)
+                {
+                    destiny.Add(field);
+                }
+            }
         }
     }
 }

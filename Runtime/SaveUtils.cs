@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SaveSystem.Encryption;
 using SaveSystem.GuidsResolve.Legacy;
+using SaveSystem.Serializers;
 using SaveSystem.Storages;
 using SaveSystem.Utilities;
 using UnityEngine;
@@ -35,7 +36,7 @@ namespace SaveSystem
             else
             {
                 var defaultObject = ScriptableObject.CreateInstance(obj.GetType());
-                ReflectionUtils.CopyTo(defaultObject, obj);
+                SerializationUtilities.CopyTo(defaultObject, obj);
             }
         }
         
