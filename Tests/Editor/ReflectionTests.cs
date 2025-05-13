@@ -62,7 +62,7 @@ namespace SaveSystem.Tests.Editor
             var type = typeof(Child);
             
             // act
-            var fields = ReflectionUtils.GetSerializableFields(type);
+            var fields = ReflectionUtils.GetPersistentFields(type);
             
             // assert
             var expected = new []
@@ -88,7 +88,7 @@ namespace SaveSystem.Tests.Editor
             var type = typeof(ChildOnlyFields);
             
             // act
-            var fields = ReflectionUtils.GetSerializableFields(type);
+            var fields = ReflectionUtils.GetPersistentFields(type);
             
             // assert
             var expected = new []
@@ -112,7 +112,7 @@ namespace SaveSystem.Tests.Editor
             var type = typeof(ChildDeclared);
             
             // act
-            var fields = ReflectionUtils.GetSerializableFields(type);
+            var fields = ReflectionUtils.GetPersistentFields(type);
             
             // assert
             var expected = new []

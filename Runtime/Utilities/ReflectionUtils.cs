@@ -12,38 +12,26 @@ namespace SaveSystem.Utilities
         {
             var sourceType = source.GetType();
             
-            // get the fields to ignore
-            var ignoreFields = new List<string>();
-            var att = sourceType.GetCustomAttribute<DoNotPersistAttribute>();
-            if (att != null)
-            {
-                ignoreFields.AddRange(att.Fields);
-            }
-            
-            var fields = GetSerializableFields(sourceType);
+            var fields = GetPersistentFields(sourceType);
             foreach (var fieldInfo in fields)
             {
-                var ignore = ignoreFields.Contains(fieldInfo.Name);
-                if (ignore)
-                {
-                    continue;
-                }
-
-                var persistent = fieldInfo.GetCustomAttribute<DoNotPersistAttribute>() == null;
-                if (!persistent)
-                {
-                    continue;
-                }
-                
                 var value = fieldInfo.GetValue(source);
                 fieldInfo.SetValue(destiny, value);
             }
         }
         
-        public static List<FieldInfo> GetSerializableFields(Type type)
+        public static List<FieldInfo> GetPersistentFields(Type type)
         {
             var serializableFields = new List<FieldInfo>();
             var persistDeclaredOnly = type.GetCustomAttribute<PersistDeclaredOnlyAttribute>() != null;
+            
+            // get fields to ignore
+            var ignoreFields = new List<string>();
+            var doNotPersistAttribute = type.GetCustomAttribute<DoNotPersistAttribute>();
+            if (doNotPersistAttribute != null)
+            {
+                ignoreFields.AddRange(doNotPersistAttribute.Fields);
+            }
             
             if (persistDeclaredOnly)
             {
@@ -69,6 +57,8 @@ namespace SaveSystem.Utilities
                             (!Attribute.IsDefined(field, typeof(NonSerializedAttribute)) && field.IsPublic))
                         {
                             var doPersist = onlyFields.Count == 0 || onlyFields.Contains(field.Name);
+                            doPersist &= field.GetCustomAttribute<DoNotPersistAttribute>() == null;
+                            doPersist &= !ignoreFields.Contains(field.Name);
                             if (doPersist)
                             {
                                 serializableFields.Add(field);
@@ -79,7 +69,7 @@ namespace SaveSystem.Utilities
                     type = type.BaseType;
                 }
             }
-
+            
             return serializableFields;
         }
     }
