@@ -1,22 +1,23 @@
-﻿using System.Collections;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEngine.TestTools;
 
 namespace SaveSystem.Tests.Editor
 {
+    [Obsolete("These tests are obsolete since the DoNotPersist, OnlyPersist and PersisteclaredOnly attributes " +
+              "are obsolete as well.")]
     public class PersistAttributesTests
     {
         private static PersistentTest _data;
 
-        [SetUp]
+        // [SetUp]
         public void SetUp()
         {
             _data = TestsReferences.Instance.persistent;
         }
 
-        [UnityTest]
+        // [UnityTest]
         public IEnumerator WhenSavingAndLoadingAnObject_FieldsPersist()
         {
             // arrange
@@ -32,7 +33,7 @@ namespace SaveSystem.Tests.Editor
             Assert.AreEqual(expected, _data.I);
         }
 
-        [UnityTest]
+        // [UnityTest]
         public IEnumerator WhenSavingAndLoadingAnObjectWithADoNotPersistField_ItDoesNotPersist()
         {
             // arrange
