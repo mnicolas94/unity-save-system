@@ -8,7 +8,7 @@ namespace SaveSystem.Utilities
     [CreateAssetMenu(fileName = "SaveGroup", menuName = "Facticus/Save System/SaveGroup", order = 0)]
     public class SaveGroup : ScriptableObject, IPersistentResetable, IPersistentAdapter
     {
-        [SerializeField, DoNotPersist] private List<ScriptableObject> _objects;
+        [SerializeField] private List<ScriptableObject> _objects;
 
         public bool IsInGroup(ScriptableObject obj)
         {

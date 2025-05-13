@@ -7,6 +7,7 @@ namespace SaveSystem.Attributes
     /// <summary>
     /// Mark a class to only persist declared fields and ignore any inherited ones.
     /// </summary>
+    [Obsolete("Use com.unity.properties's DontCreatePropertyAttribute instead.")]
     public class PersistDeclaredOnlyAttribute : Attribute
     {
         public PersistDeclaredOnlyAttribute()

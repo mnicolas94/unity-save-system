@@ -7,6 +7,7 @@ namespace SaveSystem.Attributes
     /// <summary>
     /// Define a list of fields to be the only ones to persist by the save system.
     /// </summary>
+    [Obsolete("Use com.unity.properties's DontCreatePropertyAttribute instead.")]
     [AttributeUsage(AttributeTargets.Class)]
     public class OnlyPersistAttribute : Attribute
     {

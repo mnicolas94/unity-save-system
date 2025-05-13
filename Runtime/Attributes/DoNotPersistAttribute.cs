@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace SaveSystem.Attributes
 {
+    [Obsolete("Use com.unity.properties's DontCreatePropertyAttribute instead.")]
     public class DoNotPersistAttribute : Attribute
     {
         private List<string> _fields;
