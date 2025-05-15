@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SaveSystem.Attributes;
 using UnityEngine;
 
 namespace SaveSystem.Utilities
@@ -8,7 +7,7 @@ namespace SaveSystem.Utilities
     [CreateAssetMenu(fileName = "SaveGroup", menuName = "Facticus/Save System/SaveGroup", order = 0)]
     public class SaveGroup : ScriptableObject, IPersistentResetable, IPersistentAdapter
     {
-        [SerializeField] private List<ScriptableObject> _objects;
+        [SerializeField] private List<ScriptableObject> _objects = new();
 
         public bool IsInGroup(ScriptableObject obj)
         {
