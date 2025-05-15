@@ -14,6 +14,8 @@ namespace SaveSystem
     [CreateAssetMenu(fileName = "SaveSystemSettings", menuName = "Facticus/Save System/SaveSystemSettings")]
     public class SaveSystemSettings : ScriptableObjectSingleton<SaveSystemSettings>
     {
+        public static string GuidsResolverFieldName = nameof(_guidsResolver);
+        
         [Header("Storage")]
         [SerializeReference, SubclassSelector] private IStorage _storage = new FilesStorage();
         public IStorage Storage => _storage;
@@ -46,21 +48,23 @@ namespace SaveSystem
         public bool EncryptData => _encryptData;
 
         [Header("Asset Guid's database")]
+        [SerializeField] private bool _populateDatabaseBeforeEnterPlayMode;
+        public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
+        
         [SerializeReference, SubclassSelector] private IGuidResolver _guidsResolver = new GuidsDatabase();
         public IGuidResolver GuidsResolver => _guidsResolver;
 
         [Obsolete("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
         [Tooltip("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
+        [HideInInspector]
         [SerializeField] private List<string> _searchDatabaseAssetsInPaths;
         public List<string> SearchDatabaseAssetsInPaths => _searchDatabaseAssetsInPaths;
         
         [Obsolete("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
         [Tooltip("Deprecated since v0.6.0. Click Tools/Facticus/Save System/Migration/From <=0.5.x")]
+        [HideInInspector]
         [SerializeField] private List<string> _ignoreDatabaseAssetsInPaths;
         public List<string> IgnoreDatabaseAssetsInPaths => _ignoreDatabaseAssetsInPaths;
-        
-        [SerializeField] private bool _populateDatabaseBeforeEnterPlayMode;
-        public bool PopulateDatabaseBeforeEnterPlayMode => _populateDatabaseBeforeEnterPlayMode;
 
         [Header("Listeners")]
         [SerializeField] private SaveLoadBroadcaster _broadcaster = new SaveLoadBroadcaster();
