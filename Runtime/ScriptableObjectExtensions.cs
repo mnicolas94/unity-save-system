@@ -64,6 +64,11 @@ namespace SaveSystem
 
         public static async Task DeleteData(this ScriptableObject obj)
         {
+            if (obj is IPersistentAdapter adapter)
+            {
+                await adapter.DeleteData();
+                return;
+            }
             await SaveUtils.RemoveObjectData(obj);
         }
         
