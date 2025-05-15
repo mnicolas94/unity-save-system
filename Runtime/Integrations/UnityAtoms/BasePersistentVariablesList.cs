@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SaveSystem.Attributes;
 using SaveSystem.GuidsResolve;
+using Unity.Properties;
 using UnityAtoms;
 using UnityEngine;
 using Utils.Serializables;
@@ -21,8 +22,8 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         where I : AtomVariableInstancer<V, P, T, E1, E2, F>
         where R : AtomReference<T, P, C, V, E1, E2, F, I>
     {
-        [SerializeField, DoNotPersist] private SerializableDictionary<V, R> _variables = new();
-        [SerializeField, DoNotPersist] private bool _autoSave;
+        [SerializeField, DontCreateProperty] private SerializableDictionary<V, R> _variables = new();
+        [SerializeField, DontCreateProperty] private bool _autoSave;
         [SerializeField, HideInInspector] private SerializableDictionary<string, T> _values = new();
 
         public List<V> Variables => _variables.Keys.ToList();
