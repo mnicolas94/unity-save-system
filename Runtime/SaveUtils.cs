@@ -99,6 +99,8 @@ namespace SaveSystem
                 var memoryStream = (MemoryStream)stream;
                 await storage.Write(profile, guid, memoryStream.ToArray());
             }
+
+            await stream.DisposeAsync();
             
             // DebugLog($"- SaveUtils.SaveObject: saving to {filePath}");
             
@@ -171,6 +173,8 @@ namespace SaveSystem
                 var checkSum = reader.ReadBytes(checksumLength);
                 int dataLength = reader.ReadInt32();
                 var data = reader.ReadBytes(dataLength);
+
+                await stream.DisposeAsync();
 
                 // decrypt data if encrypted
                 byte[] decryptedData;
