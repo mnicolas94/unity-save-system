@@ -1,12 +1,13 @@
 ﻿using SaveSystem.Utilities;
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace SaveSystem.Editor.PropertyDrawers
 {
     [CustomPropertyDrawer(typeof(IdReference<>), true)]
-    public class SerializedIdPropertyDrawer : PropertyDrawer
+    public class IdReferencePropertyDrawer : PropertyDrawer
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
