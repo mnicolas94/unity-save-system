@@ -12,6 +12,14 @@ namespace SaveSystem
         private static readonly Dictionary<ScriptableObject, float> CustomCooldowns = new ();
         private static readonly List<ScriptableObject> OnCooldown = new ();
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Init()
+        {
+            LastSavedTimes.Clear();
+            CustomCooldowns.Clear();
+            OnCooldown.Clear();
+        }
+
         /// <summary>
         /// Saves the object avoiding saving too often to reduce overhead. If the request to save is too often, the save will be performed after
         /// a cooldown. It ignores any save request during the cooldown period.
