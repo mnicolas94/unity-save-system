@@ -8,8 +8,21 @@ namespace SaveSystem
     public static class ScriptableObjectExtensions
     {
         private const float DefaultSaveCooldown = 1f;
-        private static readonly Dictionary<ScriptableObject, float> _lastSavedTime = new ();
-        private static readonly List<ScriptableObject> _onCooldown = new ();
+        private static readonly Dictionary<ScriptableObject, float> LastSavedTimes = new ();
+        private static readonly Dictionary<ScriptableObject, float> CustomCooldowns = new ();
+        private static readonly List<ScriptableObject> OnCooldown = new ();
+
+        /// <summary>
+        /// Saves the object avoiding saving too often to reduce overhead. If the request to save is too often, the save will be performed after
+        /// a cooldown. It ignores any save request during the cooldown period.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="cooldown">The allowed time between saves</param>
+        public static async Task SaveNotOften(this ScriptableObject obj, float cooldown)
+        {
+            CustomCooldowns[obj] = cooldown;
+            await SaveNotOften(obj);
+        }
         
         /// <summary>
         /// Saves the object avoiding saving too often to reduce overhead. If the request to save is too often, the save will be performed after
@@ -18,13 +31,13 @@ namespace SaveSystem
         /// <param name="obj"></param>
         public static async Task SaveNotOften(this ScriptableObject obj)
         {
-            var cooldown = DefaultSaveCooldown;
-            var lastSaveTime = _lastSavedTime.GetValueOrDefault(obj, -cooldown * 2);
+            var cooldown = CustomCooldowns.GetValueOrDefault(obj, DefaultSaveCooldown);
+            var lastSaveTime = LastSavedTimes.GetValueOrDefault(obj, -cooldown * 2);
             var elapsed = Time.time - lastSaveTime;
             
             if (elapsed < cooldown)  // trying to save too early
             {
-                if (!_onCooldown.Contains(obj))
+                if (!OnCooldown.Contains(obj))
                 {
                     SaveAfterCooldown(obj, cooldown);
                 }
@@ -36,17 +49,17 @@ namespace SaveSystem
         
         private static async void SaveAfterCooldown(ScriptableObject obj, float cooldown)
         {
-            _onCooldown.Add(obj);
+            OnCooldown.Add(obj);
                     
             await Awaitable.WaitForSecondsAsync(cooldown);
             await obj.Save();
 
-            _onCooldown.Remove(obj);
+            OnCooldown.Remove(obj);
         }
         
         public static async Task Save(this ScriptableObject obj)
         {
-            _lastSavedTime[obj] = Time.time;
+            LastSavedTimes[obj] = Time.time;
             
             if (obj is IPersistentAdapter adapter)
             {
