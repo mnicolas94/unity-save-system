@@ -12,14 +12,14 @@ namespace SaveSystem.Editor.PropertyDrawers
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             var idProperty = property.FindPropertyRelative(IdReference.IdFieldName);
-            var boxedValue = property.boxedValue;
+            var idReference = (IdReference) property.boxedValue;
 
             var field = new ObjectField();
-            field.objectType = boxedValue.GetType().GenericTypeArguments[0];
+            field.objectType = idReference.GetReferencedType();
             field.label = property.displayName;
             field.AddToClassList("unity-base-field__aligned");  // make widths aligned with other fields in inspector
             
-            var currentObject = (boxedValue as IdReference).Object;
+            var currentObject = idReference.Object;
             field.SetValueWithoutNotify(currentObject);
             field.RegisterValueChangedCallback((evt) =>
             {
