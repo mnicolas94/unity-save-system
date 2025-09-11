@@ -29,6 +29,11 @@ namespace SaveSystem.Editor.PropertyDrawers
                     idProperty.stringValue = newId;
                     idProperty.serializedObject.ApplyModifiedProperties();
                 }
+                else
+                {
+                    field.SetValueWithoutNotify(evt.previousValue);
+                    Debug.LogWarning($"No guid found for {newObject}. You might solve it by populating the guids database");
+                }
             });
             
             return field;
