@@ -64,13 +64,9 @@ namespace SaveSystem.Utilities
             return sId.Object;
         }
 
-#if UNITY_EDITOR
-
         internal override Type GetReferencedType()
         {
             return typeof(T);
         }
-
-#endif
     }
 }
