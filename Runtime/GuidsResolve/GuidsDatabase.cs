@@ -42,7 +42,7 @@ namespace SaveSystem.GuidsResolve
         
         public bool ExistsObject(Object obj)
         {
-            return _assetToGuid.ContainsKey(obj);
+            return obj && _assetToGuid.ContainsKey(obj);
         }
         
         public string GetGuid(Object obj)
