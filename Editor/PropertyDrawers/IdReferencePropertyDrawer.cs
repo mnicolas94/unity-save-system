@@ -24,7 +24,7 @@ namespace SaveSystem.Editor.PropertyDrawers
             field.RegisterValueChangedCallback((evt) =>
             {
                 var newObject = evt.newValue;
-                if (SaveSystemSettings.Instance.GuidsResolver.TryGetGuid(newObject, out var newId))
+                if (SaveSystemSettings.Instance.GuidsResolver.TryGetGuid(newObject, out var newId) || !newObject)
                 {
                     idProperty.stringValue = newId;
                     idProperty.serializedObject.ApplyModifiedProperties();
