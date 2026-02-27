@@ -23,9 +23,12 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         where R : AtomReference<T, P, C, V, E1, E2, F, I>
     {
         [SerializeField, DontCreateProperty] private SerializableDictionary<V, R> _variables = new();
+        [Tooltip("If checked, this will react to variables change event to auto-save it self")]
         [SerializeField, DontCreateProperty] private bool _autoSave;
+        [Tooltip("Minimum interval time (in seconds) to auto save")]
+        [SerializeField, Min(0f)] private float _autoSaveMinInterval;
         [SerializeField, HideInInspector] private SerializableDictionary<string, T> _values = new();
-
+        
         public List<V> Variables => _variables.Keys.ToList();
 
         private void OnEnable()
@@ -54,7 +57,7 @@ namespace SaveSystem.Runtime.Integrations.UnityAtoms
         {
             if (_autoSave)
             {
-                await this.Save();
+                await this.SaveNotOften(_autoSaveMinInterval);
             }
         }
 
