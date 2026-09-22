@@ -99,7 +99,7 @@ namespace SaveSystem
             if (!report.Success)
             {
                 obj.ResetToDefault();
-                SaveLoadBroadcaster.Instance.NotifyLoad(obj);  // notify load since it was not notified in LoadObject function
+                SaveLoadBroadcaster.Instance.NotifyLoadEnded(obj);  // notify load since it was not notified in LoadObject function
                 await obj.Save();
             }
 

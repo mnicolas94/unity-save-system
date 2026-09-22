@@ -13,8 +13,10 @@ namespace SaveSystem
     {
         public static SaveLoadBroadcaster Instance => SaveSystemSettings.Instance.Broadcaster;
         
-        [SerializeField] private UnityEvent<ScriptableObject> _onSave;
-        [SerializeField] private UnityEvent<ScriptableObject> _onLoad;
+        [SerializeField] private UnityEvent<ScriptableObject> _saveStarted;
+        [SerializeField] private UnityEvent<ScriptableObject> _saveEnded;
+        [SerializeField] private UnityEvent<ScriptableObject> _loadStarted;
+        [SerializeField] private UnityEvent<ScriptableObject> _loadEnded;
 
         private Dictionary<ScriptableObject, Action> _onSaveSpecific = new Dictionary<ScriptableObject, Action>();
         private Dictionary<ScriptableObject, Action> _onLoadSpecific = new Dictionary<ScriptableObject, Action>();
@@ -22,11 +24,17 @@ namespace SaveSystem
         private Dictionary<ScriptableObject, string> _savedInScenes = new Dictionary<ScriptableObject, string>();
         private Dictionary<ScriptableObject, string> _loadedInScenes = new Dictionary<ScriptableObject, string>();
 
-        public UnityEvent<ScriptableObject> OnSave => _onSave;
+        public UnityEvent<ScriptableObject> SaveStarted => _saveStarted;
+        public UnityEvent<ScriptableObject> SaveEnded => _saveEnded;
+        public UnityEvent<ScriptableObject> LoadStarted => _saveStarted;
+        public UnityEvent<ScriptableObject> LoadEnded => _loadEnded;
 
-        public UnityEvent<ScriptableObject> OnLoad => _onLoad;
+        internal void NotifySaveStarted(ScriptableObject persistent)
+        {
+            _saveStarted.Invoke(persistent);
+        }
 
-        internal void NotifySave(ScriptableObject persistent)
+        internal void NotifySaveEnded(ScriptableObject persistent)
         {
             // track saved state
             if (!_savedInScenes.ContainsKey(persistent))
@@ -36,14 +44,19 @@ namespace SaveSystem
             _savedInScenes[persistent] = SceneManager.GetActiveScene().name;
             
             // notify to listeners
-            _onSave.Invoke(persistent);
+            _saveEnded.Invoke(persistent);
             if (_onSaveSpecific.TryGetValue(persistent, out var listeners))
             {
                 listeners?.Invoke();
             }
         }
+
+        internal void NotifyLoadStarted(ScriptableObject persistent)
+        {
+            _loadStarted.Invoke(persistent);
+        }
         
-        internal void NotifyLoad(ScriptableObject persistent)
+        internal void NotifyLoadEnded(ScriptableObject persistent)
         {
             // track loaded state
             if (!_loadedInScenes.ContainsKey(persistent))
@@ -53,7 +66,7 @@ namespace SaveSystem
             _loadedInScenes[persistent] = SceneManager.GetActiveScene().name;
             
             // notify to listeners
-            _onLoad.Invoke(persistent);
+            _loadEnded.Invoke(persistent);
             if (_onLoadSpecific.TryGetValue(persistent, out var listeners))
             {
                 listeners?.Invoke();

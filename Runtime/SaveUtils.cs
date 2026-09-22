@@ -42,6 +42,8 @@ namespace SaveSystem
         
         public static async Task SaveObject(ScriptableObject obj)
         {
+            SaveLoadBroadcaster.Instance.NotifySaveStarted(obj);
+            
             var saveSystemSettings = SaveSystemSettings.Instance;
             var guidResolver = saveSystemSettings.GuidsResolver;
             
@@ -108,11 +110,13 @@ namespace SaveSystem
             {
                 receiverAfter.OnAfterSave();
             }
-            SaveLoadBroadcaster.Instance.NotifySave(obj);
+            SaveLoadBroadcaster.Instance.NotifySaveEnded(obj);
         }
 
         public static async Task<LoadReport> LoadObject(ScriptableObject obj)
         {
+            SaveLoadBroadcaster.Instance.NotifyLoadStarted(obj);
+            
             var report = new LoadReport();
 
             try
@@ -215,7 +219,7 @@ namespace SaveSystem
                 }
 
                 // notify object was loaded
-                SaveLoadBroadcaster.Instance.NotifyLoad(obj);
+                SaveLoadBroadcaster.Instance.NotifyLoadEnded(obj);
             }
             catch (Exception e)
             {
